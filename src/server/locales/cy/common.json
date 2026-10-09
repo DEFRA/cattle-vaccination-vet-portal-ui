@@ -14,6 +14,29 @@
     "about": {
       "title": "Amdanom",
       "heading": "Amdanom"
+    },
+    "cookies": {
+      "title": "Cwcis"
+    }
+  },
+  "govuk-analytics-consent": {
+    "banner": {
+      "title": "Cwcis ar $t(service.name)"
+    },
+    "cookies": {
+      "intro": "Mae $t(service.name) yn rhoi ffeiliau bach (a elwir yn 'cwcis') ar eich dyfais i wneud i'r gwasanaeth weithio ac i ddeall sut mae'n cael ei ddefnyddio.",
+      "categoryQuestion": "Ydych chi eisiau derbyn cwcis dadansoddi?",
+      "consent": {
+        "expiry": "1 flwyddyn"
+      },
+      "crumb": {
+        "purpose": "Yn diogelu ffurflenni rhag ffugio ceisiadau traws-safle.",
+        "expiry": "Pan fyddwch yn cau eich porwr"
+      },
+      "i18next": {
+        "purpose": "Yn cofio eich dewis iaith.",
+        "expiry": "1 flwyddyn"
+      }
     }
   },
   "language": {

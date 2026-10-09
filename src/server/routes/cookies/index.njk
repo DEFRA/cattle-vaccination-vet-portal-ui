@@ -1,0 +1,6 @@
+{% extends "layouts/page.njk" %}
+{% from "govuk-analytics-consent/macro.njk" import govukAnalyticsConsentCookiesPage %}
+
+{% block content %}
+  {{ govukAnalyticsConsentCookiesPage(govukAnalyticsConsent) }}
+{% endblock %}

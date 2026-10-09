@@ -11,6 +11,7 @@ Core delivery platform Node.js Frontend Template.
 - [Server-side Caching](#server-side-caching)
 - [Redis](#redis)
 - [Translations](#translations)
+- [Cookie consent](#cookie-consent)
 - [Local Development](#local-development)
   - [Setup](#setup)
   - [Development](#development)
@@ -66,6 +67,24 @@ Nunjucks templates can use `{{ t('key') }}` for translations. The language is de
 parameter, `i18next` cookie, or `Accept-Language` header, in that order. Selecting a language with `?lang=cy` stores it
 in the `i18next` cookie for future requests. Other or unsupported languages fall back to English. Add strings to
 `src/server/locales/en/common.json` and `src/server/locales/cy/common.json`.
+
+## Cookie consent
+
+The service uses [@transform-uk/govuk-analytics-consent](https://github.com/TransformCore/govuk-analytics-consent)
+for its cookie banner and generated settings page at `/cookies`, linked from the footer. Both the banner and
+settings form work without JavaScript and submit to `/govuk-analytics-consent/consent` with a Crumb CSRF token.
+Preferences are stored for one year in `govuk_analytics_consent`. The essential cookie definitions also document
+the browser-session `crumb` cookie and the one-year `i18next` language cookie; rejecting optional cookies does
+not remove these.
+
+Consent copy follows the request's i18next language. The package supplies English and Welsh defaults; service
+overrides and custom cookie descriptions live under `govuk-analytics-consent` in the common translation catalogues.
+
+GTM is disabled unless `GTM_CONTAINER_ID` is set to a valid container ID (for example, `GTM-XXXXXXX`).
+Before enabling analytics tags, declare their presets in `src/server/plugins/cookie-consent.js` so their cookie
+definitions, rejection cleanup, and CSP origins are included. No analytics tags are enabled by default.
+The same consent configuration supplies Blankie's CSP sources. Script nonces protect the inline consent
+bootstrap and GOV.UK scripts without allowing `unsafe-inline`; nonce- and token-bearing pages are not cached.
 
 ## Proxy
 

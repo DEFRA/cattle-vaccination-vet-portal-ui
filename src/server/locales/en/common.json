@@ -14,6 +14,29 @@
     "about": {
       "title": "About",
       "heading": "About"
+    },
+    "cookies": {
+      "title": "Cookies"
+    }
+  },
+  "govuk-analytics-consent": {
+    "banner": {
+      "title": "Cookies on $t(service.name)"
+    },
+    "cookies": {
+      "intro": "$t(service.name) puts small files (known as 'cookies') onto your device to make the service work and to understand how it's used.",
+      "categoryQuestion": "Do you want to accept {{label}} cookies?",
+      "consent": {
+        "expiry": "1 year"
+      },
+      "crumb": {
+        "purpose": "Protects forms against cross-site request forgery.",
+        "expiry": "When you close your browser"
+      },
+      "i18next": {
+        "purpose": "Remembers your language preference.",
+        "expiry": "1 year"
+      }
     }
   },
   "language": {

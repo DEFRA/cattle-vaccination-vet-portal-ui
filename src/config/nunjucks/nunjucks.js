@@ -2,6 +2,7 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import hapiVision from '@hapi/vision'
 import { fileURLToPath } from 'node:url'
+import { govukAnalyticsConsentTemplatePath } from '@transform-uk/govuk-analytics-consent'
 
 import { config } from '../config.js'
 import { context } from './context/context.js'
@@ -11,6 +12,7 @@ import * as globals from './globals/globals.js'
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 const nunjucksEnvironment = nunjucks.configure(
   [
+    govukAnalyticsConsentTemplatePath(),
     'node_modules/govuk-frontend/dist/',
     path.resolve(dirname, '../../server/common/templates'),
     path.resolve(dirname, '../../server/common/components')

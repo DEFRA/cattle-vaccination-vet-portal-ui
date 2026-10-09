@@ -15,6 +15,7 @@ import { sessionCache } from './plugins/session-cache.js'
 import { getCacheEngine } from './common/helpers/session-cache/cache-engine.js'
 import { secureContext } from '@defra/hapi-secure-context'
 import { contentSecurityPolicy } from './plugins/content-security-policy.js'
+import { cookieConsent } from './plugins/cookie-consent.js'
 import { metrics } from '@defra/cdp-metrics'
 
 export async function createServer() {
@@ -76,10 +77,15 @@ export async function createServer() {
     },
     Scooter,
     contentSecurityPolicy,
+    cookieConsent,
     router // Register all the controllers/routes defined in src/server/router.js
   ])
 
   server.ext('onPreResponse', (request, h) => {
+    // Unlike Hapi's default no-cache, no-store prevents storing HTML containing CSRF tokens and CSP nonces.
+    if (request.response.variety === 'view') {
+      request.response.header('cache-control', 'private, no-store')
+    }
     // Keep raw-response cookies from i18next alongside Hapi-managed cookies.
     const cookie = request.raw.res.getHeader('set-cookie')
     if (cookie && typeof request.response.header === 'function') {
