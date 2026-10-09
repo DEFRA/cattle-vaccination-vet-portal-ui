@@ -56,6 +56,7 @@ describe('context and cache', () => {
 
       test('Should provide expected context', () => {
         expect(contextResult).toEqual({
+          cspNonce: undefined,
           assetPath: '/public/assets',
           breadcrumbs: [],
           getAssetPath: expect.any(Function),
