@@ -25,6 +25,7 @@ Apply these standards to all changes in this repository. Follow the existing pat
 ## Quality, security, and dependencies
 
 - Keep changes maintainable and meet the repository's quality gate. Preserve or add appropriate tests for behavior changes.
+- Every new or modified HTML form that submits a state-changing request must include CSRF protection. For Nunjucks forms, include a hidden `crumb` field with `{{ crumb }}`; rely on the server's `@hapi/crumb` validation and never disable it to make a form work. Add or update tests to verify the form includes its crumb and invalid or missing crumbs are rejected.
 - Check dependencies for updates and known vulnerabilities when changing dependencies; do not introduce packages with known vulnerabilities.
 - Do not commit secrets or sensitive configuration.
 

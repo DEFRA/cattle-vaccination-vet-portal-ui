@@ -1,5 +1,6 @@
 import path from 'path'
 import hapi from '@hapi/hapi'
+import crumb from '@hapi/crumb'
 import Scooter from '@hapi/scooter'
 
 import { router } from './plugins/router.js'
@@ -62,10 +63,30 @@ export async function createServer() {
     sessionCache,
     i18nPlugin,
     nunjucksConfig,
+    {
+      plugin: crumb,
+      options: {
+        addToViewContext: true,
+        cookieOptions: {
+          isSecure: config.get('isProduction'),
+          isHttpOnly: true,
+          isSameSite: 'Strict'
+        }
+      }
+    },
     Scooter,
     contentSecurityPolicy,
     router // Register all the controllers/routes defined in src/server/router.js
   ])
+
+  server.ext('onPreResponse', (request, h) => {
+    // Keep raw-response cookies from i18next alongside Hapi-managed cookies.
+    const cookie = request.raw.res.getHeader('set-cookie')
+    if (cookie && typeof request.response.header === 'function') {
+      request.response.header('set-cookie', cookie, { append: true })
+    }
+    return h.continue
+  })
 
   server.ext('onPreResponse', catchAll)
 

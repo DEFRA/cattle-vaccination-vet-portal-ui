@@ -57,7 +57,12 @@ describe('#homeController', () => {
     expect($welshPage('.govuk-language-navigation__link').attr('href')).toBe(
       '/?lang=en'
     )
-    expect(welshResponse.headers['set-cookie']).toContain('i18next=cy')
+    expect(welshResponse.headers['set-cookie']).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('i18next=cy'),
+        expect.stringContaining('crumb=')
+      ])
+    )
 
     const rememberedResponse = await server.inject({
       method: 'GET',
