@@ -7,6 +7,7 @@ import { config } from '#/config/config.js'
 import { pulse } from './plugins/pulse.js'
 import { catchAll } from './common/helpers/errors.js'
 import { nunjucksConfig } from '#/config/nunjucks/nunjucks.js'
+import { i18nPlugin } from '#/config/nunjucks/i18n.js'
 import { requestTracing } from './plugins/request-tracing.js'
 import { requestLogger } from './plugins/request-logger.js'
 import { sessionCache } from './plugins/session-cache.js'
@@ -59,6 +60,7 @@ export async function createServer() {
     secureContext,
     pulse,
     sessionCache,
+    i18nPlugin,
     nunjucksConfig,
     Scooter,
     contentSecurityPolicy,

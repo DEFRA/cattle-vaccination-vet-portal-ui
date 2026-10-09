@@ -2,12 +2,17 @@
 
 {# Import GOVUK components globally #}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/language-navigation/macro.njk" import govukLanguageNavigation %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {# Import custom components globally #}
 {% from "heading/macro.njk" import appHeading %}
 
 {% set mainClasses = "app-main-wrapper" %}
+
+{% set languageNavigationHtml %}
+  {{ govukLanguageNavigation(languageNavigation) }}
+{% endset %}
 
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ getAssetPath("node_modules/govuk-frontend/dist/govuk/assets/images/favicon.ico") }}">
@@ -27,13 +32,19 @@
     homepageUrl: "https://www.gov.uk/",
     classes: "app-header",
     containerClasses: "govuk-width-container",
-    serviceName: serviceName,
-    serviceUrl: serviceUrl,
     useTudorCrown: true
   }) }}
 
   {{ govukServiceNavigation({
-    navigation: navigation
+    serviceName: serviceName,
+    serviceUrl: serviceUrl,
+    navigation: navigation,
+    slots: {
+      end: {
+        html: languageNavigationHtml,
+        align: "inline"
+      }
+    }
   }) }}
 {% endblock %}
 

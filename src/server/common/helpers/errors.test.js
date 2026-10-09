@@ -23,7 +23,7 @@ describe('#errors', () => {
     })
 
     expect(result).toEqual(
-      expect.stringContaining('Page not found | cattle-vaccination-vet-portal-ui')
+      expect.stringContaining('Page not found | Bovine TB Vet Portal')
     )
     expect(statusCode).toBe(statusCodes.notFound)
   })

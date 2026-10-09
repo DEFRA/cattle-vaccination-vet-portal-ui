@@ -1,0 +1,24 @@
+{
+  "service": {
+    "name": "Bovine TB Vet Portal"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "heading": "Home"
+    },
+    "about": {
+      "title": "About",
+      "heading": "About"
+    }
+  },
+  "language": {
+    "navigationLabel": "Choose a language",
+    "en": "English",
+    "cy": "Cymraeg"
+  }
+}

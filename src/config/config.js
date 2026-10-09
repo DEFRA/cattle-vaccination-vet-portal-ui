@@ -44,7 +44,7 @@ export const config = convict({
   serviceName: {
     doc: 'Applications Service Name',
     format: String,
-    default: 'cattle-vaccination-vet-portal-ui'
+    default: 'Bovine TB Vet Portal'
   },
   root: {
     doc: 'Project root',

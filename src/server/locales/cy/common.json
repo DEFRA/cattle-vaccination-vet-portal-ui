@@ -1,0 +1,24 @@
+{
+  "service": {
+    "name": "Porth Milfeddygon TB Buchol"
+  },
+  "navigation": {
+    "home": "Hafan",
+    "about": "Amdanom"
+  },
+  "pages": {
+    "home": {
+      "title": "Hafan",
+      "heading": "Hafan"
+    },
+    "about": {
+      "title": "Amdanom",
+      "heading": "Amdanom"
+    }
+  },
+  "language": {
+    "navigationLabel": "Dewiswch iaith",
+    "en": "English",
+    "cy": "Cymraeg"
+  }
+}

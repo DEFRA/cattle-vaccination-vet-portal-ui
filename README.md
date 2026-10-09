@@ -10,6 +10,7 @@ Core delivery platform Node.js Frontend Template.
   - [Node.js](#nodejs)
 - [Server-side Caching](#server-side-caching)
 - [Redis](#redis)
+- [Translations](#translations)
 - [Local Development](#local-development)
   - [Setup](#setup)
   - [Development](#development)
@@ -58,6 +59,13 @@ matches the service name. e.g. `my-service` will have access to everything in Re
 
 If your service does not require a session cache to be shared between instances or if you don't require Redis, you can
 disable setting `SESSION_CACHE_ENGINE=false` or changing the default value in `src/config/index.js`.
+
+## Translations
+
+Nunjucks templates can use `{{ t('key') }}` for translations. The language is detected from the `?lang=` query
+parameter, `i18next` cookie, or `Accept-Language` header, in that order. Selecting a language with `?lang=cy` stores it
+in the `i18next` cookie for future requests. Other or unsupported languages fall back to English. Add strings to
+`src/server/locales/en/common.json` and `src/server/locales/cy/common.json`.
 
 ## Proxy
 

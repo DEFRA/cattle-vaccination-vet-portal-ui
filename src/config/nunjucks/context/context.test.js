@@ -59,6 +59,24 @@ describe('context and cache', () => {
           assetPath: '/public/assets',
           breadcrumbs: [],
           getAssetPath: expect.any(Function),
+          htmlLang: 'en',
+          languageNavigation: {
+            ariaLabel: 'Choose a language',
+            items: [
+              {
+                lang: 'en',
+                text: 'English',
+                href: '/?lang=en',
+                current: true
+              },
+              {
+                lang: 'cy',
+                text: 'Cymraeg',
+                href: '/?lang=cy',
+                current: false
+              }
+            ]
+          },
           navigation: [
             {
               current: true,
@@ -71,9 +89,30 @@ describe('context and cache', () => {
               href: '/about'
             }
           ],
-          serviceName: 'cattle-vaccination-vet-portal-ui',
-          serviceUrl: '/'
+          serviceName: 'Bovine TB Vet Portal',
+          serviceUrl: '/',
+          t: expect.any(Function)
         })
+      })
+
+      test('Should provide a translator for the requested language', () => {
+        const contextResult = contextImport.context({
+          path: '/',
+          language: 'cy',
+          t: () => 'Shwmae'
+        })
+
+        expect(contextResult.htmlLang).toBe('cy')
+        expect(contextResult.t('test.greeting')).toBe('Shwmae')
+      })
+
+      test('Should localize the service name for Welsh', () => {
+        const contextResult = contextImport.context({
+          path: '/',
+          language: 'cy'
+        })
+
+        expect(contextResult.serviceName).toBe('Porth Milfeddygon TB Buchol')
       })
 
       describe('With valid asset path', () => {
@@ -148,6 +187,24 @@ describe('context and cache', () => {
           assetPath: '/public/assets',
           breadcrumbs: [],
           getAssetPath: expect.any(Function),
+          htmlLang: 'en',
+          languageNavigation: {
+            ariaLabel: 'Choose a language',
+            items: [
+              {
+                lang: 'en',
+                text: 'English',
+                href: '/?lang=en',
+                current: true
+              },
+              {
+                lang: 'cy',
+                text: 'Cymraeg',
+                href: '/?lang=cy',
+                current: false
+              }
+            ]
+          },
           navigation: [
             {
               current: true,
@@ -160,8 +217,9 @@ describe('context and cache', () => {
               href: '/about'
             }
           ],
-          serviceName: 'cattle-vaccination-vet-portal-ui',
-          serviceUrl: '/'
+          serviceName: 'Bovine TB Vet Portal',
+          serviceUrl: '/',
+          t: expect.any(Function)
         })
       })
     })
