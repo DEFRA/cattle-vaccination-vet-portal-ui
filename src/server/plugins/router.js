@@ -4,6 +4,7 @@ import { home } from '../routes/home/index.js'
 import { about } from '../routes/about/index.js'
 import { cookies } from '../routes/cookies/index.js'
 import { health } from '../routes/health/index.js'
+import { backendHealth } from '../routes/backend-health/index.js'
 import { serveStaticFiles } from './serve-static-files.js'
 import { config } from '#/config/config.js'
 
@@ -14,7 +15,7 @@ export const router = {
       await server.register([inert])
 
       // Health-check route. Used by platform to check if service is running, do not remove!
-      await server.register([health])
+      await server.register([health, backendHealth])
 
       // Application specific routes, add your own routes here
       await server.register([home, about, cookies])
