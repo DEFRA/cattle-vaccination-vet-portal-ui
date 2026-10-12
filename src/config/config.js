@@ -214,6 +214,34 @@ export const config = convict({
       default: 'x-cdp-request-id',
       env: 'TRACING_HEADER'
     }
+  },
+  backend: {
+    baseUrl: {
+      doc: 'Cattle vaccination backend base URL',
+      format: String,
+      default: 'http://127.0.0.1:3002',
+      env: 'BACKEND_BASE_URL'
+    }
+  },
+  serviceAuth: {
+    enabled: {
+      doc: 'Attach a service-to-service JWT when calling the backend',
+      format: Boolean,
+      default: false,
+      env: 'SERVICE_AUTH_ENABLED'
+    },
+    audience: {
+      doc: 'JWT audience for service-to-service authentication',
+      format: String,
+      default: 'cattle-vaccination-backend',
+      env: 'SERVICE_AUTH_AUDIENCE'
+    },
+    tokenDurationSeconds: {
+      doc: 'Lifetime of the service-to-service JWT in seconds. Maximum 900.',
+      format: Number,
+      default: 300,
+      env: 'SERVICE_AUTH_TOKEN_DURATION'
+    }
   }
 })
 

@@ -36,6 +36,7 @@
   "author": "Defra APHA",
   "license": "OGL-UK-3.0",
   "dependencies": {
+    "@aws-sdk/client-sts": "3.1149.0",
     "@defra/cdp-auditing": "0.6.1",
     "@defra/cdp-metrics": "0.6.0",
     "@defra/hapi-secure-context": "0.4.0",
