@@ -1,4 +1,5 @@
 import Blankie from 'blankie'
+import { consent } from './cookie-consent.js'
 
 /**
  * Manage content security policies.
@@ -6,7 +7,7 @@ import Blankie from 'blankie'
  */
 const contentSecurityPolicy = {
   plugin: Blankie,
-  options: {
+  options: consent.blankieCsp({
     // Hash 'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=' is to support a GOV.UK frontend script bundled within Nunjucks macros
     // https://frontend.design-system.service.gov.uk/import-javascript/#if-our-inline-javascript-snippet-is-blocked-by-a-content-security-policy
     defaultSrc: ['self'],
@@ -24,8 +25,8 @@ const contentSecurityPolicy = {
     frameAncestors: ['none'],
     formAction: ['self'],
     manifestSrc: ['self'],
-    generateNonces: false
-  }
+    generateNonces: 'script'
+  })
 }
 
 export { contentSecurityPolicy }

@@ -1,5 +1,6 @@
 import path from 'path'
 import hapi from '@hapi/hapi'
+import crumb from '@hapi/crumb'
 import Scooter from '@hapi/scooter'
 
 import { router } from './plugins/router.js'
@@ -7,12 +8,14 @@ import { config } from '#/config/config.js'
 import { pulse } from './plugins/pulse.js'
 import { catchAll } from './common/helpers/errors.js'
 import { nunjucksConfig } from '#/config/nunjucks/nunjucks.js'
+import { i18nPlugin } from '#/config/nunjucks/i18n.js'
 import { requestTracing } from './plugins/request-tracing.js'
 import { requestLogger } from './plugins/request-logger.js'
 import { sessionCache } from './plugins/session-cache.js'
 import { getCacheEngine } from './common/helpers/session-cache/cache-engine.js'
 import { secureContext } from '@defra/hapi-secure-context'
 import { contentSecurityPolicy } from './plugins/content-security-policy.js'
+import { cookieConsent } from './plugins/cookie-consent.js'
 import { metrics } from '@defra/cdp-metrics'
 
 export async function createServer() {
@@ -59,11 +62,37 @@ export async function createServer() {
     secureContext,
     pulse,
     sessionCache,
+    i18nPlugin,
     nunjucksConfig,
+    {
+      plugin: crumb,
+      options: {
+        addToViewContext: true,
+        cookieOptions: {
+          isSecure: config.get('isProduction'),
+          isHttpOnly: true,
+          isSameSite: 'Strict'
+        }
+      }
+    },
     Scooter,
     contentSecurityPolicy,
+    cookieConsent,
     router // Register all the controllers/routes defined in src/server/router.js
   ])
+
+  server.ext('onPreResponse', (request, h) => {
+    // Unlike Hapi's default no-cache, no-store prevents storing HTML containing CSRF tokens and CSP nonces.
+    if (request.response.variety === 'view') {
+      request.response.header('cache-control', 'private, no-store')
+    }
+    // Keep raw-response cookies from i18next alongside Hapi-managed cookies.
+    const cookie = request.raw.res.getHeader('set-cookie')
+    if (cookie && typeof request.response.header === 'function') {
+      request.response.header('set-cookie', cookie, { append: true })
+    }
+    return h.continue
+  })
 
   server.ext('onPreResponse', catchAll)
 

@@ -3,17 +3,17 @@
  * Provided as an example, remove or modify as required.
  */
 export const aboutController = {
-  handler(_request, h) {
+  handler(request, h) {
     return h.view('about/index', {
-      pageTitle: 'About',
-      heading: 'About',
+      pageTitle: request.t('pages.about.title'),
+      heading: request.t('pages.about.heading'),
       breadcrumbs: [
         {
-          text: 'Home',
+          text: request.t('navigation.home'),
           href: '/'
         },
         {
-          text: 'About'
+          text: request.t('navigation.about')
         }
       ]
     })

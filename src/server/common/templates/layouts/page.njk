@@ -1,13 +1,18 @@
-{% extends "govuk/template.njk" %}
+{% extends "govuk-analytics-consent/template.njk" %}
 
 {# Import GOVUK components globally #}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "govuk/components/language-navigation/macro.njk" import govukLanguageNavigation %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {# Import custom components globally #}
 {% from "heading/macro.njk" import appHeading %}
 
 {% set mainClasses = "app-main-wrapper" %}
+
+{% set languageNavigationHtml %}
+  {{ govukLanguageNavigation(languageNavigation) }}
+{% endset %}
 
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ getAssetPath("node_modules/govuk-frontend/dist/govuk/assets/images/favicon.ico") }}">
@@ -18,6 +23,7 @@
 {% endblock %}
 
 {% block head %}
+  {{ super() }}
   <link href="{{ getAssetPath('src/client/stylesheets/application.scss') }}" rel="stylesheet">
 {% endblock %}
 
@@ -27,13 +33,19 @@
     homepageUrl: "https://www.gov.uk/",
     classes: "app-header",
     containerClasses: "govuk-width-container",
-    serviceName: serviceName,
-    serviceUrl: serviceUrl,
     useTudorCrown: true
   }) }}
 
   {{ govukServiceNavigation({
-    navigation: navigation
+    serviceName: serviceName,
+    serviceUrl: serviceUrl,
+    navigation: navigation,
+    slots: {
+      end: {
+        html: languageNavigationHtml,
+        align: "inline"
+      }
+    }
   }) }}
 {% endblock %}
 
@@ -60,8 +72,8 @@
           text: "Privacy"
         },
         {
-          href: "https://www.gov.uk/help/cookies",
-          text: "Cookies"
+          href: "/cookies",
+          text: t('pages.cookies.title')
         },
         {
           href: "https://www.gov.uk/help/accessibility-statement",
@@ -73,5 +85,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
+  {{ super() }}
   <script type="module" src="{{ getAssetPath('src/client/javascripts/application.js') }}"></script>
 {% endblock %}
