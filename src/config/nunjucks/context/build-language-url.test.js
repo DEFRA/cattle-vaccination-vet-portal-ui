@@ -11,6 +11,12 @@ describe('#buildLanguageUrl', () => {
     )
   })
 
+  test('Should replace the existing language parameter', () => {
+    expect(buildLanguageUrl('/about?lang=en&from=home#details', 'cy')).toBe(
+      '/about?lang=cy&from=home#details'
+    )
+  })
+
   test.each([
     'https://external.example/path',
     '//external.example/path',
@@ -18,7 +24,8 @@ describe('#buildLanguageUrl', () => {
     '/path%2f%2fexternal.example',
     '/path%255c%255cexternal.example',
     '/path%0d%0aHeader:value',
-    '/bad%'
+    '/bad%',
+    '/first/..//external.example/path'
   ])('Should use the home page for an unsafe path: %s', (path) => {
     expect(buildLanguageUrl(path, 'cy')).toBe('/?lang=cy')
   })
