@@ -88,6 +88,11 @@ describe('context and cache', () => {
               current: false,
               text: 'About',
               href: '/about'
+            },
+            {
+              current: false,
+              text: 'Work orders',
+              href: '/work-orders'
             }
           ],
           serviceName: 'Bovine TB Vet Portal',
@@ -216,6 +221,11 @@ describe('context and cache', () => {
               current: false,
               text: 'About',
               href: '/about'
+            },
+            {
+              current: false,
+              text: 'Work orders',
+              href: '/work-orders'
             }
           ],
           serviceName: 'Bovine TB Vet Portal',
