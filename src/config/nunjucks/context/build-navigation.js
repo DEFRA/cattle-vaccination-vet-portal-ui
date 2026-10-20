@@ -9,6 +9,11 @@ export function buildNavigation(request) {
       text: request?.t?.('navigation.about') ?? 'About',
       href: '/about',
       current: request?.path === '/about'
+    },
+    {
+      text: request?.t?.('navigation.workOrders') ?? 'Work orders',
+      href: '/work-orders',
+      current: request?.path === '/work-orders'
     }
   ]
 }

@@ -4,7 +4,8 @@
   },
   "navigation": {
     "home": "Hafan",
-    "about": "Amdanom"
+    "about": "Amdanom",
+    "workOrders": "Gorchmynion gwaith"
   },
   "pages": {
     "home": {
@@ -14,6 +15,14 @@
     "about": {
       "title": "Amdanom",
       "heading": "Amdanom"
+    },
+    "workOrders": {
+      "title": "Gorchmynion gwaith",
+      "heading": "Gorchmynion gwaith",
+      "address": "Cyfeiriad",
+      "continueWork": "Parhau â'r gwaith",
+      "cphDetails": "Manylion y CPH",
+      "empty": "Nid oes unrhyw orchmynion gwaith."
     },
     "cookies": {
       "title": "Cwcis"

@@ -4,7 +4,8 @@
   },
   "navigation": {
     "home": "Home",
-    "about": "About"
+    "about": "About",
+    "workOrders": "Work orders"
   },
   "pages": {
     "home": {
@@ -14,6 +15,14 @@
     "about": {
       "title": "About",
       "heading": "About"
+    },
+    "workOrders": {
+      "title": "Work orders",
+      "heading": "Work orders",
+      "address": "Address",
+      "continueWork": "Continue work",
+      "cphDetails": "CPH details",
+      "empty": "There are no work orders."
     },
     "cookies": {
       "title": "Cookies"
