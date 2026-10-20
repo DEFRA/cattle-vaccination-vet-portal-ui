@@ -3,44 +3,47 @@
 
 {% block content %}
   {{ appHeading({
-    text: heading,
-    caption: serviceName
+    text: heading
   }) }}
 
-  <div data-testid="work-orders">
-    {% for workOrder in workOrders %}
-      {{ govukSummaryList({
-        card: {
-          classes: "govuk-!-margin-bottom-4",
-          title: {
-            text: workOrder.title
-          },
-          actions: {
-            items: [
-              {
-                href: "#",
-                text: t("pages.workOrders.continueWork")
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div data-testid="work-orders">
+        {% for workOrder in workOrders %}
+          {{ govukSummaryList({
+            card: {
+              classes: "govuk-!-margin-bottom-4",
+              title: {
+                text: workOrder.title
               },
+              actions: {
+                items: [
+                  {
+                    href: "#",
+                    text: t("pages.workOrders.continueWork")
+                  },
+                  {
+                    href: "#",
+                    text: t("pages.workOrders.cphDetails")
+                  }
+                ]
+              }
+            },
+            rows: [
               {
-                href: "#",
-                text: t("pages.workOrders.cphDetails")
+                key: {
+                  text: t("pages.workOrders.address")
+                },
+                value: {
+                  text: workOrder.address
+                }
               }
             ]
-          }
-        },
-        rows: [
-          {
-            key: {
-              text: t("pages.workOrders.address")
-            },
-            value: {
-              text: workOrder.address
-            }
-          }
-        ]
-      }) }}
-    {% else %}
-      <p class="govuk-body">{{ t("pages.workOrders.empty") }}</p>
-    {% endfor %}
+          }) }}
+        {% else %}
+          <p class="govuk-body">{{ t("pages.workOrders.empty") }}</p>
+        {% endfor %}
+      </div>
+    </div>
   </div>
 {% endblock %}

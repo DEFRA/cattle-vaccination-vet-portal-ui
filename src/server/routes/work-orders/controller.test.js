@@ -45,6 +45,10 @@ describe('#workOrdersController', () => {
 
     const $page = load(result)
 
+    expect($page('[data-testid="app-heading-caption"]')).toHaveLength(0)
+    expect(
+      $page('.govuk-grid-column-two-thirds [data-testid="work-orders"]')
+    ).toHaveLength(1)
     expect($page('.govuk-summary-card__title').text()).toContain(
       'Odds Farm Park - 40/715/9200'
     )
