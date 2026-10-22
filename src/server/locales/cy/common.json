@@ -24,6 +24,18 @@
       "cphDetails": "Manylion y CPH",
       "empty": "Nid oes unrhyw orchmynion gwaith."
     },
+    "workOrder": {
+      "title": "Rhestr dasgau {{name}}",
+      "heading": "Rhestr dasgau {{name}}",
+      "back": "Yn ôl i orchmynion gwaith",
+      "cphInformation": "Gwybodaeth CPH",
+      "cphNumber": "Rhif CPH",
+      "address": "Cyfeiriad",
+      "fullCphInformation": "Gwybodaeth CPH lawn",
+      "vaccinationLists": "Rhestrau brechu",
+      "vaccinationListsHint": "Cyn ymweld â'r CPH, crëwch restr brechu gyfredol.",
+      "createVaccinationList": "Creu rhestr brechu"
+    },
     "cookies": {
       "title": "Cwcis"
     }

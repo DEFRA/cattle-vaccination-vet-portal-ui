@@ -1,4 +1,4 @@
-import { workOrdersController } from './controller.js'
+import { workOrderController, workOrdersController } from './controller.js'
 
 /**
  * Sets up the routes used in the /work-orders page.
@@ -13,6 +13,11 @@ export const workOrders = {
           method: 'GET',
           path: '/work-orders',
           ...workOrdersController
+        },
+        {
+          method: 'GET',
+          path: '/work-orders/{workOrderId}',
+          ...workOrderController
         }
       ])
     }
