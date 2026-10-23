@@ -113,9 +113,7 @@ describe('#workOrderController', () => {
     expect($page('main .govuk-back-link')).toHaveLength(0)
     expect($page('h1').text()).toContain('Hill Farm task list')
     expect(information).toContain('CPH number: 40/715/9200')
-    expect(information).toContain(
-      'Address: 1 Farm Lane, Testtown, ZZ1 1ZZ'
-    )
+    expect(information).toContain('Address: 1 Farm Lane, Testtown, ZZ1 1ZZ')
     expect($page('a.govuk-link').text()).toContain('Full CPH information')
     expect($page('#vaccination-lists').text()).toBe('Vaccination lists')
     expect(result).toContain(
