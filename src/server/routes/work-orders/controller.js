@@ -50,13 +50,14 @@ export const workOrderController = {
         .code(statusCodes.notFound)
     }
 
-    const name = workOrder.cphName || workOrder.cphCode || workOrder.id
+    const cph = workOrder.cph
+    const name = cph?.locationName || cph?.cphCode || workOrder.id
 
     return h.view('work-orders/details', {
       pageTitle: request.t('pages.workOrder.title', { name }),
       heading: request.t('pages.workOrder.heading', { name }),
-      cphCode: workOrder.cphCode,
-      address: workOrder.address
+      cphCode: cph?.cphCode,
+      address: cph?.address
     })
   }
 }

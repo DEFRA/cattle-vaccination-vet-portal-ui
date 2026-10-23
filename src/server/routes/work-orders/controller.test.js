@@ -81,10 +81,13 @@ describe('#workOrderController', () => {
   test('Should show the CPH information we have', async () => {
     backendRequest.mockResolvedValue({
       id: 'CV WorkOrder 2',
-      cphName: 'Odds Farm Park',
-      cphCode: '40/715/9200',
-      cphNumber: '407159200',
-      address: 'Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX',
+      cph: {
+        id: '407159200',
+        displayName: '40/715/9200',
+        cphCode: '40/715/9200',
+        locationName: 'Odds Farm Park',
+        address: 'Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX'
+      },
       workLists: []
     })
 
