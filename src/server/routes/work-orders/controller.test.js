@@ -10,11 +10,11 @@ vi.mock('#/server/common/helpers/backend-client.js', () => ({
 const workOrders = [
   {
     id: 'CV WorkOrder 2',
-    title: 'Odds Farm Park - 40/715/9200',
-    cphName: 'Odds Farm Park',
+    title: 'Hill Farm - 40/715/9200',
+    cphName: 'Hill Farm',
     cphCode: '40/715/9200',
     cphNumber: '407159200',
-    address: 'Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX'
+    address: '1 Farm Lane, Testtown, ZZ1 1ZZ'
   }
 ]
 
@@ -50,10 +50,10 @@ describe('#workOrdersController', () => {
       $page('.govuk-grid-column-two-thirds [data-testid="work-orders"]')
     ).toHaveLength(1)
     expect($page('.govuk-summary-card__title').text()).toContain(
-      'Odds Farm Park - 40/715/9200'
+      'Hill Farm - 40/715/9200'
     )
     expect($page('.govuk-summary-list__value').text()).toContain(
-      'Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX'
+      '1 Farm Lane, Testtown, ZZ1 1ZZ'
     )
     const actions = $page('.govuk-summary-card__action a')
 
@@ -85,8 +85,8 @@ describe('#workOrderController', () => {
         id: '407159200',
         displayName: '40/715/9200',
         cphCode: '40/715/9200',
-        locationName: 'Odds Farm Park',
-        address: 'Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX'
+        locationName: 'Hill Farm',
+        address: '1 Farm Lane, Testtown, ZZ1 1ZZ'
       },
       workLists: []
     })
@@ -111,10 +111,10 @@ describe('#workOrderController', () => {
       $page('.govuk-width-container > .govuk-back-link').attr('href')
     ).toBe('/work-orders')
     expect($page('main .govuk-back-link')).toHaveLength(0)
-    expect($page('h1').text()).toContain('Odds Farm Park task list')
+    expect($page('h1').text()).toContain('Hill Farm task list')
     expect(information).toContain('CPH number: 40/715/9200')
     expect(information).toContain(
-      'Address: Odds Farm Park, Wooburn Common Rd, High Wycombe, HP10 0LX'
+      'Address: 1 Farm Lane, Testtown, ZZ1 1ZZ'
     )
     expect($page('a.govuk-link').text()).toContain('Full CPH information')
     expect($page('#vaccination-lists').text()).toBe('Vaccination lists')
