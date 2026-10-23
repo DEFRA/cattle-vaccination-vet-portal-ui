@@ -14,10 +14,10 @@ export async function getBackendAuthHeaders() {
   return { authorization: `Bearer ${token}` }
 }
 
-export async function backendRequest(path) {
+export async function backendRequest(path, { method = 'GET' } = {}) {
   const baseUrl = config.get('backend.baseUrl').replace(/\/$/, '')
   const headers = await getBackendAuthHeaders()
-  const response = await fetch(`${baseUrl}${path}`, { headers })
+  const response = await fetch(`${baseUrl}${path}`, { method, headers })
 
   if (!response.ok) {
     const error = new Error(

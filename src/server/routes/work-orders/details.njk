@@ -28,11 +28,21 @@
       </p>
 
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
+      {% if workLists.length %}
+        <ul class="govuk-list govuk-list--bullet">
+          {% for workList in workLists %}
+            <li>{{ workList.id }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
-      {{ govukButton({
-        text: t("pages.workOrder.createVaccinationList"),
-        type: "button"
-      }) }}
+      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}">
+        <input type="hidden" name="crumb" value="{{ crumb }}">
+        {{ govukButton({
+          text: t("pages.workOrder.createVaccinationList"),
+          preventDoubleClick: true
+        }) }}
+      </form>
     </div>
   </div>
 {% endblock %}
