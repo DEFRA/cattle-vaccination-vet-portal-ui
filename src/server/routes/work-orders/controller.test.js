@@ -88,7 +88,7 @@ describe('#workOrderController', () => {
         locationName: 'Hill Farm',
         address: '1 Farm Lane, Testtown, ZZ1 1ZZ'
       },
-      workLists: []
+      workLists: [{ id: 'CV WorkList 2' }]
     })
 
     const { result, statusCode } = await server.inject({
@@ -119,9 +119,18 @@ describe('#workOrderController', () => {
     expect(result).toContain(
       'Before visiting the CPH, create an up to date vaccination list.'
     )
-    expect($page('button.govuk-button').text()).toContain(
+    const form = $page('form[action^="/work-orders/"]')
+
+    expect($page('.govuk-list--bullet li').text()).toBe('CV WorkList 2')
+    expect(form.attr('method')).toBe('post')
+    expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')
+    expect(form.find('input[name="crumb"]').val()).toBeTruthy()
+    expect(form.find('button.govuk-button').text()).toContain(
       'Create vaccination list'
     )
+    expect(
+      form.find('button.govuk-button').attr('data-prevent-double-click')
+    ).toBe('true')
     expect($page('.govuk-summary-list')).toHaveLength(0)
     expect(result).not.toContain('issue date')
     expect(result).not.toContain('CPH contact')
@@ -140,5 +149,45 @@ describe('#workOrderController', () => {
     })
 
     expect(statusCode).toBe(statusCodes.notFound)
+  })
+
+  test('Should create a work list and return to the work order', async () => {
+    backendRequest.mockResolvedValue({
+      id: 'CV WorkOrder 2',
+      cph: { locationName: 'Hill Farm' },
+      workLists: []
+    })
+
+    const page = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202'
+    })
+    const $page = load(page.result)
+    const form = $page('form[action^="/work-orders/"]')
+    const crumbCookie = page.headers['set-cookie'].find((value) =>
+      value.startsWith('crumb=')
+    )
+
+    backendRequest.mockClear()
+    backendRequest.mockResolvedValue({ id: 'CV WorkList 3' })
+
+    const response = await server.inject({
+      method: 'POST',
+      url: '/work-orders/CV%20WorkOrder%202',
+      headers: {
+        cookie: crumbCookie.split(';')[0],
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      payload: new URLSearchParams({
+        crumb: form.find('input[name="crumb"]').val()
+      }).toString()
+    })
+
+    expect(response.statusCode).toBe(303)
+    expect(response.headers.location).toBe('/work-orders/CV%20WorkOrder%202')
+    expect(backendRequest).toHaveBeenCalledWith(
+      '/workorders/CV%20WorkOrder%202/work-lists',
+      { method: 'POST' }
+    )
   })
 })

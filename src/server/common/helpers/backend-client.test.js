@@ -38,6 +38,7 @@ describe('#backend client', () => {
     await backendRequest('/health')
 
     expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:3002/health', {
+      method: 'GET',
       headers: {}
     })
   })
