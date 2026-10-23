@@ -54,8 +54,9 @@ describe('#backend client', () => {
   test('Should throw when the backend response is not ok', async () => {
     fetch.mockResolvedValue({ ok: false, status: 502 })
 
-    await expect(backendRequest('/health')).rejects.toThrow(
-      'Backend request failed with status 502'
-    )
+    await expect(backendRequest('/health')).rejects.toMatchObject({
+      message: 'Backend request failed with status 502',
+      statusCode: 502
+    })
   })
 })

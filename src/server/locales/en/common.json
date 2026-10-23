@@ -24,6 +24,18 @@
       "cphDetails": "CPH details",
       "empty": "There are no work orders."
     },
+    "workOrder": {
+      "title": "{{name}} task list",
+      "heading": "{{name}} task list",
+      "back": "Back to work orders",
+      "cphInformation": "CPH information",
+      "cphNumber": "CPH number",
+      "address": "Address",
+      "fullCphInformation": "Full CPH information",
+      "vaccinationLists": "Vaccination lists",
+      "vaccinationListsHint": "Before visiting the CPH, create an up to date vaccination list.",
+      "createVaccinationList": "Create vaccination list"
+    },
     "cookies": {
       "title": "Cookies"
     }

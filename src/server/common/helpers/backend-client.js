@@ -20,7 +20,11 @@ export async function backendRequest(path) {
   const response = await fetch(`${baseUrl}${path}`, { headers })
 
   if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`)
+    const error = new Error(
+      `Backend request failed with status ${response.status}`
+    )
+    error.statusCode = response.status
+    throw error
   }
 
   return response.json()
