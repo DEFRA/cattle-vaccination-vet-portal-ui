@@ -31,7 +31,9 @@
       {% if workLists.length %}
         <ul class="govuk-list govuk-list--bullet">
           {% for workList in workLists %}
-            <li>{{ workList.id }}</li>
+            <li>
+              <a class="govuk-link" href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}">{{ workList.name }}</a>
+            </li>
           {% endfor %}
         </ul>
       {% endif %}

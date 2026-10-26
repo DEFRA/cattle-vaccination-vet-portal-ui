@@ -36,6 +36,15 @@
       "vaccinationListsHint": "Before visiting the CPH, create an up to date vaccination list.",
       "createVaccinationList": "Create vaccination list"
     },
+    "workList": {
+      "title": "{{name}}",
+      "heading": "{{name}}",
+      "back": "Back to work order",
+      "earTag": "Ear tag",
+      "dob": "DOB",
+      "sex": "Sex",
+      "breed": "Breed"
+    },
     "cookies": {
       "title": "Cookies"
     }
