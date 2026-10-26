@@ -25,6 +25,16 @@ export const workOrdersController = {
   }
 }
 
+function workOrderNotFound(h) {
+  return h
+    .view('error/index', {
+      pageTitle: 'Page not found',
+      heading: statusCodes.notFound,
+      message: 'Page not found'
+    })
+    .code(statusCodes.notFound)
+}
+
 /**
  * Work order task list page controller.
  */
@@ -41,13 +51,7 @@ export const workOrderController = {
         throw error
       }
 
-      return h
-        .view('error/index', {
-          pageTitle: 'Page not found',
-          heading: statusCodes.notFound,
-          message: 'Page not found'
-        })
-        .code(statusCodes.notFound)
+      return workOrderNotFound(h)
     }
 
     const cph = workOrder.cph
@@ -56,8 +60,36 @@ export const workOrderController = {
     return h.view('work-orders/details', {
       pageTitle: request.t('pages.workOrder.title', { name }),
       heading: request.t('pages.workOrder.heading', { name }),
+      workOrderId: request.params.workOrderId,
       cphCode: cph?.cphCode,
-      address: cph?.address
+      address: cph?.address,
+      workLists: workOrder.workLists || []
     })
+  }
+}
+
+/**
+ * Creates a work list, then returns to the work order page.
+ */
+export const createWorkListController = {
+  async handler(request, h) {
+    const workOrderId = request.params.workOrderId
+
+    try {
+      await backendRequest(
+        `/workorders/${encodeURIComponent(workOrderId)}/work-lists`,
+        { method: 'POST' }
+      )
+    } catch (error) {
+      if (error.statusCode !== statusCodes.notFound) {
+        throw error
+      }
+
+      return workOrderNotFound(h)
+    }
+
+    return h
+      .redirect(`/work-orders/${encodeURIComponent(workOrderId)}`)
+      .code(303)
   }
 }
