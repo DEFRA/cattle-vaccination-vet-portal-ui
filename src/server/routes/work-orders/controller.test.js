@@ -88,7 +88,7 @@ describe('#workOrderController', () => {
         locationName: 'Hill Farm',
         address: '1 Farm Lane, Testtown, ZZ1 1ZZ'
       },
-      workLists: [{ id: 'CV WorkList 2' }]
+      workLists: [{ id: 'a0W000000000002', name: 'CV WorkList 2' }]
     })
 
     const { result, statusCode } = await server.inject({
@@ -121,7 +121,10 @@ describe('#workOrderController', () => {
     )
     const form = $page('form[action^="/work-orders/"]')
 
-    expect($page('.govuk-list--bullet li').text()).toBe('CV WorkList 2')
+    expect($page('.govuk-list--bullet a').text()).toBe('CV WorkList 2')
+    expect($page('.govuk-list--bullet a').attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+    )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')
     expect(form.find('input[name="crumb"]').val()).toBeTruthy()
@@ -169,7 +172,7 @@ describe('#workOrderController', () => {
     )
 
     backendRequest.mockClear()
-    backendRequest.mockResolvedValue({ id: 'CV WorkList 3' })
+    backendRequest.mockResolvedValue({ id: 'a0W000000000003' })
 
     const response = await server.inject({
       method: 'POST',
@@ -184,10 +187,83 @@ describe('#workOrderController', () => {
     })
 
     expect(response.statusCode).toBe(303)
-    expect(response.headers.location).toBe('/work-orders/CV%20WorkOrder%202')
+    expect(response.headers.location).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000003'
+    )
     expect(backendRequest).toHaveBeenCalledWith(
       '/workorders/CV%20WorkOrder%202/work-lists',
       { method: 'POST' }
     )
+  })
+})
+
+describe('#workListController', () => {
+  let server
+
+  beforeAll(async () => {
+    server = await createServer()
+    await server.initialize()
+  })
+
+  afterAll(async () => {
+    await server.stop({ timeout: 0 })
+  })
+
+  test('Should show the cattle on the work list', async () => {
+    backendRequest.mockResolvedValue({
+      id: 'a0W000000000002',
+      name: 'CV WorkList 2',
+      cattle: [
+        {
+          earTag: 'UK111',
+          dob: '2020-11-04',
+          sex: 'Male',
+          breed: 'WPA'
+        }
+      ]
+    })
+
+    const { result, statusCode } = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+    })
+
+    expect(statusCode).toBe(statusCodes.ok)
+    expect(backendRequest).toHaveBeenCalledWith(
+      '/workorders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+    )
+
+    const $page = load(result)
+    const cells = $page('.govuk-table__cell, .govuk-table__header')
+      .map((_, cell) => $page(cell).text().trim())
+      .get()
+
+    expect($page('h1').text()).toContain('CV WorkList 2')
+    expect($page('.govuk-back-link').attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202'
+    )
+    expect(cells).toEqual([
+      'Ear tag',
+      'DOB',
+      'Sex',
+      'Breed',
+      'UK111',
+      '2020-11-04',
+      'Male',
+      'WPA'
+    ])
+  })
+
+  test('Should return not found when the work list does not exist', async () => {
+    const error = new Error('Backend request failed with status 404')
+    error.statusCode = statusCodes.notFound
+    backendRequest.mockRejectedValue(error)
+
+    const { statusCode } = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000099'
+    })
+
+    expect(statusCode).toBe(statusCodes.notFound)
   })
 })

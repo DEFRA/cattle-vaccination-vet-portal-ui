@@ -1,5 +1,6 @@
 import {
   createWorkListController,
+  workListController,
   workOrderController,
   workOrdersController
 } from './controller.js'
@@ -27,6 +28,11 @@ export const workOrders = {
           method: 'POST',
           path: '/work-orders/{workOrderId}',
           ...createWorkListController
+        },
+        {
+          method: 'GET',
+          path: '/work-orders/{workOrderId}/work-lists/{workListId}',
+          ...workListController
         }
       ])
     }

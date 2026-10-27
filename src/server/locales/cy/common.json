@@ -36,6 +36,15 @@
       "vaccinationListsHint": "Cyn ymweld â'r CPH, crëwch restr brechu gyfredol.",
       "createVaccinationList": "Creu rhestr brechu"
     },
+    "workList": {
+      "title": "{{name}}",
+      "heading": "{{name}}",
+      "back": "Yn ôl i'r gorchymyn gwaith",
+      "earTag": "Tag clust",
+      "dob": "Dyddiad geni",
+      "sex": "Rhyw",
+      "breed": "Brîd"
+    },
     "cookies": {
       "title": "Cwcis"
     }
