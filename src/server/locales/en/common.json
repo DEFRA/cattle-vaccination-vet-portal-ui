@@ -27,18 +27,22 @@
     "workOrder": {
       "title": "{{name}} task list",
       "heading": "{{name}} task list",
-      "back": "Back to work orders",
+      "back": "Back to ‘My work’",
+      "issueDate": "issue date",
       "cphInformation": "CPH information",
       "cphNumber": "CPH number",
       "address": "Address",
       "fullCphInformation": "Full CPH information",
       "vaccinationLists": "Vaccination lists",
-      "vaccinationListsHint": "Before visiting the CPH, create an up to date vaccination list.",
-      "createVaccinationList": "Create vaccination list"
+      "vaccinationListsHint": "Before visiting the farm, create an up-to-date vaccination list.",
+      "createVaccinationList": "Create vaccination list",
+      "listDate": "List date",
+      "downloadLink": "Download link",
+      "workListLink": "bTB vaccination list {{name}} {{date}} (opens in a new tab)"
     },
     "workList": {
-      "title": "{{name}}",
-      "heading": "{{name}}",
+      "title": "{{name}} - bTB vaccination list",
+      "heading": "{{name}} - bTB vaccination list",
       "back": "Back to work order",
       "earTag": "Ear tag",
       "dob": "DOB",

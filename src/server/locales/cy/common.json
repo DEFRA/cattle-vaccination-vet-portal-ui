@@ -27,18 +27,22 @@
     "workOrder": {
       "title": "Rhestr dasgau {{name}}",
       "heading": "Rhestr dasgau {{name}}",
-      "back": "Yn ôl i orchmynion gwaith",
+      "back": "Yn ôl i ‘Fy ngwaith’",
+      "issueDate": "dyddiad cyhoeddi",
       "cphInformation": "Gwybodaeth CPH",
       "cphNumber": "Rhif CPH",
       "address": "Cyfeiriad",
       "fullCphInformation": "Gwybodaeth CPH lawn",
       "vaccinationLists": "Rhestrau brechu",
-      "vaccinationListsHint": "Cyn ymweld â'r CPH, crëwch restr brechu gyfredol.",
-      "createVaccinationList": "Creu rhestr brechu"
+      "vaccinationListsHint": "Cyn ymweld â’r fferm, crëwch restr frechu gyfredol.",
+      "createVaccinationList": "Creu rhestr frechu",
+      "listDate": "Dyddiad y rhestr",
+      "downloadLink": "Dolen lawrlwytho",
+      "workListLink": "Rhestr frechu bTB {{name}} {{date}} (yn agor mewn tab newydd)"
     },
     "workList": {
-      "title": "{{name}}",
-      "heading": "{{name}}",
+      "title": "{{name}} - rhestr frechu bTB",
+      "heading": "{{name}} - rhestr frechu bTB",
       "back": "Yn ôl i'r gorchymyn gwaith",
       "earTag": "Tag clust",
       "dob": "Dyddiad geni",

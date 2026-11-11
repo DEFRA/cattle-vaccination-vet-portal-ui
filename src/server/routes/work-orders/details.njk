@@ -12,10 +12,12 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">{{ heading }}</h1>
+      <h1 class="govuk-heading-l">
+        {{ t("pages.workOrder.heading", { name: name }) }}{% if issueDate %}: {{ t("pages.workOrder.issueDate") }} {{ issueDate | formatDate("d MMMM yyyy") }}{% endif %}
+      </h1>
 
       <h2 class="govuk-heading-m">{{ t("pages.workOrder.cphInformation") }}</h2>
-      <p class="govuk-body govuk-!-margin-bottom-2">
+      <p class="govuk-body govuk-!-margin-bottom-8">
         {% if cphCode %}
           {{ t("pages.workOrder.cphNumber") }}: {{ cphCode }}<br>
         {% endif %}
@@ -23,20 +25,8 @@
           {{ t("pages.workOrder.address") }}: {{ address }}
         {% endif %}
       </p>
-      <p class="govuk-body govuk-!-margin-bottom-7">
-        <a class="govuk-link" href="#">{{ t("pages.workOrder.fullCphInformation") }}</a>
-      </p>
 
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
-      {% if workLists.length %}
-        <ul class="govuk-list govuk-list--bullet">
-          {% for workList in workLists %}
-            <li>
-              <a class="govuk-link" href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}">{{ workList.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
       <form method="post" action="/work-orders/{{ workOrderId | urlencode }}">
         <input type="hidden" name="crumb" value="{{ crumb }}">
@@ -45,6 +35,41 @@
           preventDoubleClick: true
         }) }}
       </form>
+
+      {% if workLists.length %}
+        <table class="govuk-table govuk-!-margin-bottom-8 app-table-stacked">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header app-table-stacked__date">{{ t("pages.workOrder.listDate") }}</th>
+              <th scope="col" class="govuk-table__header">{{ t("pages.workOrder.downloadLink") }}</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for workList in workLists %}
+              {% if workList.createdDate %}
+                {% set workListDate = workList.createdDate | formatDate("d MMM yyyy") %}
+              {% else %}
+                {% set workListDate = workList.name %}
+              {% endif %}
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">
+                  <span class="app-table-stacked__label">{{ t("pages.workOrder.listDate") }}: </span>
+                  {{ workListDate }}
+                </th>
+                <td class="govuk-table__cell">
+                  <span class="app-table-stacked__label app-table-stacked__label--block govuk-!-font-weight-bold">{{ t("pages.workOrder.downloadLink") }}</span>
+                  <a class="govuk-link"{% if loop.first %} id="latest-list"{% endif %} href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}" target="_blank" rel="noopener noreferrer">
+                    {{ t("pages.workOrder.workListLink", {
+                      name: name,
+                      date: workListDate
+                    }) }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

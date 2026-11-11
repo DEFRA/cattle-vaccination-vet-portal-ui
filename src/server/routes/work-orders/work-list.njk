@@ -1,25 +1,136 @@
-{% extends 'layouts/page.njk' %}
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
+<!doctype html>
+<html lang="{{ htmlLang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ pageTitle }} | {{ serviceName }}</title>
+  <link href="{{ getAssetPath('src/client/stylesheets/application.scss') }}" rel="stylesheet">
+</head>
+<body class="app-work-list">
 
-{% block beforeContent %}
-  {{ govukBackLink({
-    text: t("pages.workList.back"),
-    href: "/work-orders/" + workOrderId | urlencode
-  }) }}
-{% endblock %}
+  <div class="app-work-list__toolbar">
+    <p><strong>{{ farmName }}</strong> &middot; {{ cattleCount }} cattle &middot; {{ totalPages }} page{% if totalPages != 1 %}s{% endif %}</p>
+    <button type="button" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" data-print-work-list>Print this list</button>
+  </div>
 
-{% block content %}
-  <h1 class="govuk-heading-l">{{ heading }}</h1>
+  {% for sheet in sheets %}
+    {% set pageNumber = loop.index %}
+    <div class="app-work-list__sheet{% if pageNumber > 1 %} app-work-list__sheet--continued{% endif %}">
 
-  {{ govukTable({
-    firstCellIsHeader: true,
-    head: [
-      { text: t("pages.workList.earTag") },
-      { text: t("pages.workList.dob") },
-      { text: t("pages.workList.sex") },
-      { text: t("pages.workList.breed") }
-    ],
-    rows: rows
-  }) }}
-{% endblock %}
+      <div class="app-work-list__sheet-header">
+        {% if pageNumber == 1 %}
+          <h1 class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ farmName }} - bTB vaccination list</h1>
+        {% else %}
+          <span class="app-work-list__sheet-cph">{{ farmName }} - CPH: {{ cphCode }}</span>
+        {% endif %}
+        <span class="app-work-list__range">{{ sheet.range }}</span>
+      </div>
+
+      {% if pageNumber == 1 %}
+        <div class="govuk-grid-row app-work-list__meta">
+          <div class="govuk-grid-column-one-third"><strong>CPH:</strong><br>{{ cphCode }}</div>
+          <div class="govuk-grid-column-one-third"><strong>Cattle on this list:</strong><br>{{ cattleCount }}</div>
+          <div class="govuk-grid-column-one-third"><strong>Date list was made:</strong><br>{% if createdDate %}{{ createdDate | formatDate("EEEE d MMMM yyyy") }}{% endif %}</div>
+        </div>
+
+        <table class="app-work-list__entry-table app-work-list__entry-table--date">
+          <tbody>
+            <tr>
+              <th scope="row">Vaccination date:</th>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="app-work-list__entry-table">
+          <thead>
+            <tr>
+              <th scope="col" class="app-work-list__batch">Batch</th>
+              <th scope="col">Vaccine batch number:</th>
+              <th scope="col">Vaccine expiry date:</th>
+              <th scope="col">Diluent batch number:</th>
+              <th scope="col">Diluent expiry date:</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for batch in [1, 2] %}
+              <tr>
+                <th scope="row" class="app-work-list__batch">{{ batch }}</th>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+
+      <table class="app-work-list__record-table">
+        <thead>
+          <tr>
+            <th scope="col" class="app-work-list__number">No.</th>
+            <th scope="col" class="app-work-list__ear-tag">Ear tag number</th>
+            <th scope="col" class="app-work-list__dob">DOB</th>
+            <th scope="col" class="app-work-list__sex">Sex</th>
+            <th scope="col" class="app-work-list__breed">Breed</th>
+            <th scope="col" class="app-work-list__notes">Notes/vaccine batch</th>
+          </tr>
+        </thead>
+        {% for row in sheet.rows %}
+          <tbody{% if row.number % 5 == 0 %} class="app-work-list__fifth-row"{% endif %}>
+            <tr>
+              <td class="app-work-list__number">{{ row.number }}</td>
+              <td class="app-work-list__ear-tag">
+                <span class="app-work-list__ear-tag-value">
+                  {{ row.earTagParts.prefix }}<span class="app-work-list__last-four{% if row.hasDuplicateLastFour %} app-work-list__last-four--duplicate{% endif %}"
+                    {% if row.hasDuplicateLastFour %}title="Another animal on this farm shares the last 4 digits of this ear tag"{% endif %}>{{ row.earTagParts.lastFour }}</span>
+                </span>
+              </td>
+              <td class="app-work-list__dob">{{ row.dob }}</td>
+              <td class="app-work-list__sex">{{ row.sex.substr(0,1) }}</td>
+              <td class="app-work-list__breed">{{ row.breed }}</td>
+              <td class="app-work-list__notes"></td>
+            </tr>
+          </tbody>
+        {% endfor %}
+      </table>
+
+      <div class="app-work-list__sheet-footer">
+        <span class="app-work-list__range app-work-list__range--left">{{ sheet.range }}</span>
+        <span class="app-work-list__page-number">Page {{ pageNumber }} of {{ totalPages }}</span>
+        <span class="app-work-list__range">{{ sheet.range }}</span>
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="app-work-list__sheet app-work-list__sheet--continued">
+    <div class="app-work-list__sheet-header app-work-list__blank-header">
+      <span class="app-work-list__sheet-cph">{{ farmName }} - CPH: {{ cphCode }}</span>
+      <span class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ farmName }} - Blank page</span>
+      <span class="app-work-list__range">Blank page</span>
+    </div>
+    <p>This page left blank to capture unexpected cattle.</p>
+    <table class="app-work-list__record-table">
+      <thead>
+        <tr>
+          <th scope="col" class="app-work-list__ear-tag">Ear tag number</th>
+          <th scope="col" class="app-work-list__dob">DOB</th>
+          <th scope="col" class="app-work-list__sex">Sex</th>
+          <th scope="col" class="app-work-list__breed">Breed</th>
+          <th scope="col" class="app-work-list__notes">Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for _row in range(0, 22) %}
+          <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="app-work-list__sheet-footer">
+      <span class="app-work-list__range app-work-list__range--left">Blank page</span>
+      <span class="app-work-list__page-number">Page {{ totalPages }} of {{ totalPages }}</span>
+      <span class="app-work-list__range">Blank page</span>
+    </div>
+  </div>
+
+  <script type="module" src="{{ getAssetPath('src/client/javascripts/application.js') }}"></script>
+</body>
+</html>
