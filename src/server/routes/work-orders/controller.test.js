@@ -288,10 +288,36 @@ describe('#workListController', () => {
       '1',
       'UK 977985 345673',
       '04/11/2020',
-      'Male',
+      'M',
       'WPA',
       ''
     ])
+  })
+
+  test('Should show the work list when an animal has no sex recorded', async () => {
+    backendRequest.mockResolvedValue({
+      id: 'a0W000000000002',
+      name: 'CV WorkList 2',
+      createdDate: '2026-10-08T09:00:00.000+0000',
+      cphName: 'Hill Farm',
+      cphCode: '40/715/9200',
+      cattle: [
+        {
+          earTag: 'UK977985345673',
+          dob: '2020-11-04',
+          sex: null,
+          breed: 'WPA'
+        }
+      ]
+    })
+
+    const { result, statusCode } = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+    })
+
+    expect(statusCode).toBe(statusCodes.ok)
+    expect(load(result)('tbody .app-work-list__sex').first().text()).toBe('')
   })
 
   test('Should paginate the printable list like the prototype', async () => {
