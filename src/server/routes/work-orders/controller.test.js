@@ -269,9 +269,7 @@ describe('#workListController', () => {
       'Hill Farm · 1 cattle · 2 pages'
     )
     expect($page('[data-print-work-list]').text()).toBe('Print this list')
-    expect($page('.app-work-list__meta').text()).toContain(
-      'CPH:40/715/9200'
-    )
+    expect($page('.app-work-list__meta').text()).toContain('CPH:40/715/9200')
     expect($page('.app-work-list__meta').text()).toContain(
       'Date list was made:Thursday 8 October 2026'
     )
