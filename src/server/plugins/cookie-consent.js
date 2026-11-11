@@ -16,6 +16,22 @@ export const consent = createGovUkAnalyticsConsent({
   tags: ['google-analytics'],
   cookies: [
     {
+      name: config.get('session.cache.name'),
+      categoryId: 'essential',
+      purpose: 'Keeps you signed in to the service.',
+      purposeKey: 'govuk-analytics-consent.cookies.session.purpose',
+      expiry: 'When your session expires',
+      expiryKey: 'govuk-analytics-consent.cookies.session.expiry'
+    },
+    {
+      name: 'bell-entra',
+      categoryId: 'essential',
+      purpose: 'Protects your Microsoft sign-in.',
+      purposeKey: 'govuk-analytics-consent.cookies.bell.purpose',
+      expiry: '10 minutes',
+      expiryKey: 'govuk-analytics-consent.cookies.bell.expiry'
+    },
+    {
       name: 'govuk_analytics_consent',
       categoryId: 'essential',
       purpose: 'Saves your cookie consent settings',

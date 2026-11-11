@@ -2,6 +2,12 @@
   "service": {
     "name": "Bovine TB Vet Portal"
   },
+  "authentication": {
+    "signOut": "Sign out",
+    "failedTitle": "You could not be signed in",
+    "failedMessage": "We could not complete your sign-in. Please try again.",
+    "tryAgain": "Try signing in again"
+  },
   "navigation": {
     "home": "Home",
     "about": "About",
@@ -66,6 +72,14 @@
       "i18next": {
         "purpose": "Remembers your language preference.",
         "expiry": "1 year"
+      },
+      "session": {
+        "purpose": "Keeps you signed in to the service.",
+        "expiry": "When your session expires"
+      },
+      "bell": {
+        "purpose": "Protects your Microsoft sign-in.",
+        "expiry": "10 minutes"
       }
     }
   },

@@ -22,6 +22,9 @@ export function context(request) {
     ? requestedLanguage
     : 'en'
   const t = request?.t ?? getTranslator(language)
+  const user =
+    (request?.yar?.id ? request.yar.get('user') : null) ??
+    (request?.auth?.strategy === 'session' ? request.auth.credentials : null)
 
   if (config.get('isProduction') && !viteManifest) {
     try {
@@ -32,6 +35,7 @@ export function context(request) {
   }
 
   return {
+    ...(user?.id && user.expiresAt > Date.now() ? { isSignedIn: true } : {}),
     cspNonce: request?.plugins?.blankie?.nonces?.script,
     assetPath: `${assetPath}/assets`,
     serviceName: t('service.name'),

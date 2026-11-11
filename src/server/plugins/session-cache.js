@@ -15,12 +15,15 @@ export const sessionCache = {
       cache: sessionConfig.cache.name,
       expiresIn: sessionConfig.cache.ttl
     },
+    maxCookieSize: 0,
     storeBlank: false,
     errorOnCacheNotReady: true,
     cookieOptions: {
       password: sessionConfig.cookie.password,
       ttl: sessionConfig.cookie.ttl,
       isSecure: config.get('session.cookie.secure'),
+      isHttpOnly: true,
+      isSameSite: 'Lax',
       clearInvalid: true
     }
   }

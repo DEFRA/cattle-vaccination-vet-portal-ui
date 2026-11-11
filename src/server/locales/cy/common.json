@@ -2,6 +2,12 @@
   "service": {
     "name": "Porth Milfeddygon TB Buchol"
   },
+  "authentication": {
+    "signOut": "Allgofnodi",
+    "failedTitle": "Nid oedd modd eich mewngofnodi",
+    "failedMessage": "Nid oedd modd cwblhau eich mewngofnodi. Rhowch gynnig arall arni.",
+    "tryAgain": "Ceisiwch fewngofnodi eto"
+  },
   "navigation": {
     "home": "Hafan",
     "about": "Amdanom",
@@ -66,6 +72,14 @@
       "i18next": {
         "purpose": "Yn cofio eich dewis iaith.",
         "expiry": "1 flwyddyn"
+      },
+      "session": {
+        "purpose": "Yn eich cadw wedi mewngofnodi i'r gwasanaeth.",
+        "expiry": "Pan ddaw eich sesiwn i ben"
+      },
+      "bell": {
+        "purpose": "Yn diogelu eich mewngofnodi Microsoft.",
+        "expiry": "10 munud"
       }
     }
   },

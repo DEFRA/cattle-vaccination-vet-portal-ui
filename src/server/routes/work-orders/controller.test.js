@@ -18,6 +18,11 @@ const workOrders = [
   }
 ]
 
+const authenticated = {
+  strategy: 'session',
+  credentials: { id: 'test-user', expiresAt: Date.now() + 3600000 }
+}
+
 describe('#workOrdersController', () => {
   let server
 
@@ -37,7 +42,8 @@ describe('#workOrdersController', () => {
   test('Should list work orders from the backend', async () => {
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders'
+      url: '/work-orders',
+      auth: authenticated
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -93,7 +99,8 @@ describe('#workOrderController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202'
+      url: '/work-orders/CV%20WorkOrder%202',
+      auth: authenticated
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -148,7 +155,8 @@ describe('#workOrderController', () => {
 
     const { statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%2099'
+      url: '/work-orders/CV%20WorkOrder%2099',
+      auth: authenticated
     })
 
     expect(statusCode).toBe(statusCodes.notFound)
@@ -163,7 +171,8 @@ describe('#workOrderController', () => {
 
     const page = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202'
+      url: '/work-orders/CV%20WorkOrder%202',
+      auth: authenticated
     })
     const $page = load(page.result)
     const form = $page('form[action^="/work-orders/"]')
@@ -177,6 +186,7 @@ describe('#workOrderController', () => {
     const response = await server.inject({
       method: 'POST',
       url: '/work-orders/CV%20WorkOrder%202',
+      auth: authenticated,
       headers: {
         cookie: crumbCookie.split(';')[0],
         'content-type': 'application/x-www-form-urlencoded'
@@ -225,7 +235,8 @@ describe('#workListController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002',
+      auth: authenticated
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -261,7 +272,8 @@ describe('#workListController', () => {
 
     const { statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000099'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000099',
+      auth: authenticated
     })
 
     expect(statusCode).toBe(statusCodes.notFound)

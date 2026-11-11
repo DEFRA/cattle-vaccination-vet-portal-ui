@@ -46,6 +46,8 @@ describe('#cookiesController', () => {
       expect(rows).toContain('govuk_analytics_consent')
       expect(rows).toContain('crumb')
       expect(rows).toContain('i18next')
+      expect(rows).toContain('session')
+      expect(rows).toContain('bell-entra')
       expect(rows).toContain(purpose)
       expect(rows).toContain(expiry)
       expect(settingsForm.attr('action')).toBe(

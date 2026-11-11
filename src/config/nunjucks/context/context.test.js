@@ -101,6 +101,18 @@ describe('context and cache', () => {
         })
       })
 
+      test('Should not read an uninitialized session on error pages', () => {
+        const get = vi.fn(() => {
+          throw new Error('Session is not initialized')
+        })
+        const result = contextImport.context({
+          path: '/missing',
+          yar: { id: null, get }
+        })
+        expect(result.isSignedIn).toBeUndefined()
+        expect(get).not.toHaveBeenCalled()
+      })
+
       test('Should provide a translator for the requested language', () => {
         const contextResult = contextImport.context({
           path: '/',

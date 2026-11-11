@@ -12,6 +12,7 @@ Core delivery platform Node.js Frontend Template.
 - [Redis](#redis)
 - [Translations](#translations)
 - [Cookie consent](#cookie-consent)
+- [Authentication](#authentication)
 - [Local Development](#local-development)
   - [Setup](#setup)
   - [Development](#development)
@@ -74,8 +75,8 @@ The service uses [@transform-uk/govuk-analytics-consent](https://github.com/Tran
 for its cookie banner and generated settings page at `/cookies`, linked from the footer. Both the banner and
 settings form work without JavaScript and submit to `/govuk-analytics-consent/consent` with a Crumb CSRF token.
 Preferences are stored for one year in `govuk_analytics_consent`. The essential cookie definitions also document
-the browser-session `crumb` cookie and the one-year `i18next` language cookie; rejecting optional cookies does
-not remove these.
+the browser-session `crumb` cookie, the one-year `i18next` language cookie, the authentication session cookie,
+and the ten-minute `bell-entra` sign-in cookie. Rejecting optional cookies does not remove these.
 
 Consent copy follows the request's i18next language. The package supplies English and Welsh defaults; service
 overrides and custom cookie descriptions live under `govuk-analytics-consent` in the common translation catalogues.
@@ -97,6 +98,59 @@ HTTPS_PROXY=...
 NO_PROXY=...
 
 No additional proxy configuration is required in the service.
+
+## Authentication
+
+All work order pages and work-list creation require sign-in through a single Microsoft Entra tenant.
+Home, about, cookies, health checks and static assets remain public. There is no authentication bypass,
+including in local development. Backend requests continue to use the existing service-to-service authentication;
+user tokens are not forwarded to the backend.
+
+Configure the existing Entra app registration with the **Web** platform and register the exact redirect URI
+`http://localhost:3000/auth/sign-in-oidc` for local development. Register the corresponding HTTPS URI for each
+deployed environment. The registration must be single-tenant and support authorization-code sign-in with
+`openid`, `profile` and `email` scopes. Implicit grants, Microsoft Graph permissions, refresh-token permissions
+and a Microsoft sign-out callback are not needed.
+
+For local development, copy `.env.example` to `.env` and fill in the Entra values and both independently
+generated cookie passwords. The server loads `.env` when you run `npm run dev`. Supply deployed settings through
+the deployment's secret/configuration management instead.
+
+| Environment variable      | Value                                                              |
+| ------------------------- | ------------------------------------------------------------------ |
+| `ENTRA_TENANT_ID`         | Directory (tenant) UUID, not `common` or `organizations`           |
+| `ENTRA_CLIENT_ID`         | Application (client) UUID                                          |
+| `ENTRA_CLIENT_SECRET`     | Client secret **value**, not its identifier                        |
+| `ENTRA_REDIRECT_URL`      | Exact registered URL ending in `/auth/sign-in-oidc`                |
+| `ENTRA_COOKIE_PASSWORD`   | Independently generated random password of at least 32 characters  |
+| `SESSION_COOKIE_PASSWORD` | Independently generated random password of at least 32 characters  |
+| `SESSION_COOKIE_SECURE`   | `true` for HTTPS; `false` only for local loopback HTTP development |
+
+Generate each cookie password separately, for example with `openssl rand -base64 48`. Do not commit credentials
+or local `.env` files. Rotate the app secret before it expires. Rotating a cookie password invalidates the
+corresponding existing sessions or in-progress sign-ins. Startup fails if settings are missing or unsafe, or
+the tenant's OpenID configuration cannot be loaded.
+
+Bell handles authorization-code exchange, OAuth state and S256 PKCE. The portal verifies the ID token against
+Entra's signing keys and checks its issuer, audience, tenant, lifetime and sign-in nonce. Only a minimal user
+identity and absolute expiry are stored in the existing server-side Yar cache; tokens are not persisted.
+Use the shared Redis session cache for deployed multi-instance environments, not the local memory cache.
+Cookies are HttpOnly and SameSite=Lax, with Secure required for HTTPS. Session IDs rotate after sign-in.
+
+Authentication expires at the earliest of the ID-token expiry, `SESSION_CACHE_TTL` and `SESSION_COOKIE_TTL`
+(the latter two default to four hours). Tokens are not refreshed; an expired session starts a new sign-in,
+which may complete through Microsoft's existing single sign-on. Safe work order links are restored after
+sign-in, but submitted forms are never replayed.
+
+The **Sign out** button submits a CSRF-protected POST and revokes only this application's session. It does not
+sign the user out of Microsoft. Tenant sign-in eligibility is not per-work-order ownership authorization;
+restrict user eligibility through enterprise-application assignment where required.
+
+The flow follows the [DEFRA Entra example](https://github.com/DEFRA/fcp-entra-example), adapted to use Yar
+without an additional `@hapi/cookie` session. Tests use explicit dummy settings and a local token endpoint,
+not real tenant credentials. Before release, check a real Entra sign-in, cancellation, deep-link return,
+work-list submission and sign-out, including outbound discovery, signing-key and token requests through the
+deployment's HTTPS proxy. No Microsoft CSP script or connection permissions are required for browser redirects.
 
 ## Local Development
 

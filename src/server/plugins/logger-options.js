@@ -27,6 +27,21 @@ export const loggerOptions = {
   level: logConfig.level,
   ...formatters[logConfig.format],
   nesting: true,
+  serializers: {
+    req(request) {
+      return {
+        id: request.id,
+        method: request.method,
+        url:
+          typeof request.url === 'string'
+            ? request.url.split('?')[0]
+            : request.url?.pathname
+      }
+    },
+    res(response) {
+      return { statusCode: response.statusCode }
+    }
+  },
   mixin() {
     const mixinValues = {}
     const traceId = getTraceId()

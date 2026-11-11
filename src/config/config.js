@@ -223,6 +223,40 @@ export const config = convict({
       env: 'BACKEND_BASE_URL'
     }
   },
+  entra: {
+    tenantId: {
+      doc: 'Single Entra tenant UUID',
+      format: String,
+      default: '',
+      env: 'ENTRA_TENANT_ID'
+    },
+    clientId: {
+      doc: 'Entra application client UUID',
+      format: String,
+      default: '',
+      env: 'ENTRA_CLIENT_ID'
+    },
+    clientSecret: {
+      doc: 'Entra application client secret',
+      format: String,
+      default: '',
+      sensitive: true,
+      env: 'ENTRA_CLIENT_SECRET'
+    },
+    redirectUrl: {
+      doc: 'Registered Web callback URL ending in /auth/sign-in-oidc',
+      format: String,
+      default: '',
+      env: 'ENTRA_REDIRECT_URL'
+    },
+    cookiePassword: {
+      doc: 'Random Bell cookie encryption password of at least 32 characters',
+      format: String,
+      default: '',
+      sensitive: true,
+      env: 'ENTRA_COOKIE_PASSWORD'
+    }
+  },
   serviceAuth: {
     enabled: {
       doc: 'Attach a service-to-service JWT when calling the backend',

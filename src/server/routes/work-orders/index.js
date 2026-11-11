@@ -13,28 +13,33 @@ export const workOrders = {
   plugin: {
     name: 'work-orders',
     register(server) {
-      server.route([
-        {
-          method: 'GET',
-          path: '/work-orders',
-          ...workOrdersController
-        },
-        {
-          method: 'GET',
-          path: '/work-orders/{workOrderId}',
-          ...workOrderController
-        },
-        {
-          method: 'POST',
-          path: '/work-orders/{workOrderId}',
-          ...createWorkListController
-        },
-        {
-          method: 'GET',
-          path: '/work-orders/{workOrderId}/work-lists/{workListId}',
-          ...workListController
-        }
-      ])
+      server.route(
+        [
+          {
+            method: 'GET',
+            path: '/work-orders',
+            ...workOrdersController
+          },
+          {
+            method: 'GET',
+            path: '/work-orders/{workOrderId}',
+            ...workOrderController
+          },
+          {
+            method: 'POST',
+            path: '/work-orders/{workOrderId}',
+            ...createWorkListController
+          },
+          {
+            method: 'GET',
+            path: '/work-orders/{workOrderId}/work-lists/{workListId}',
+            ...workListController
+          }
+        ].map((route) => ({
+          ...route,
+          options: { ...route.options, auth: 'session' }
+        }))
+      )
     }
   }
 }

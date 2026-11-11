@@ -17,6 +17,7 @@ import { secureContext } from '@defra/hapi-secure-context'
 import { contentSecurityPolicy } from './plugins/content-security-policy.js'
 import { cookieConsent } from './plugins/cookie-consent.js'
 import { serviceToken } from './plugins/service-token.js'
+import { authentication } from './plugins/auth.js'
 import { metrics } from '@defra/cdp-metrics'
 
 export async function createServer() {
@@ -80,6 +81,7 @@ export async function createServer() {
     contentSecurityPolicy,
     cookieConsent,
     serviceToken,
+    authentication,
     router // Register all the controllers/routes defined in src/server/router.js
   ])
 
