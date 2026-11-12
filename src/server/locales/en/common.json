@@ -47,7 +47,9 @@
       "earTag": "Ear tag",
       "dob": "DOB",
       "sex": "Sex",
-      "breed": "Breed"
+      "breed": "Breed",
+      "notEligible": "Not eligible: earliest vaccination date {{date}}",
+      "lastVaccinationDate": "Last vaccination date {{date}}"
     },
     "cookies": {
       "title": "Cookies"

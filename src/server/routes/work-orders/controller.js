@@ -1,9 +1,20 @@
+import {
+  addMonths,
+  endOfDay,
+  isAfter,
+  isWithinInterval,
+  parseISO,
+  startOfDay,
+  subMonths
+} from 'date-fns'
 import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { backendRequest } from '#/server/common/helpers/backend-client.js'
 import { formatDate } from '#/config/nunjucks/filters/format-date.js'
 
 const firstWorkListPageSize = 20
 const continuedWorkListPageSize = 25
+const vaccinationEligibilityPeriodMonths = 8
+const vaccinationNoteLookbackMonths = 12
 
 function newestWorkListFirst(left, right) {
   return Date.parse(right.createdDate || 0) - Date.parse(left.createdDate || 0)
@@ -26,13 +37,53 @@ function splitEarTag(earTag) {
   }
 }
 
-function buildWorkListRows(cattle) {
-  const rows = cattle.map((animal, index) => ({
-    ...animal,
-    number: index + 1,
-    dob: animal.dob ? formatDate(animal.dob, 'dd/MM/yyyy') : '',
-    earTagParts: splitEarTag(animal.earTag)
-  }))
+function buildVaccinationNote(vaccinationDate, today, t) {
+  if (!vaccinationDate) {
+    return ''
+  }
+
+  const parsedVaccinationDate = parseISO(vaccinationDate)
+  const vaccinationPeriod = {
+    start: startOfDay(subMonths(today, vaccinationNoteLookbackMonths)),
+    end: endOfDay(today)
+  }
+
+  if (!isWithinInterval(parsedVaccinationDate, vaccinationPeriod)) {
+    return ''
+  }
+
+  const earliestVaccinationDate = addMonths(
+    parsedVaccinationDate,
+    vaccinationEligibilityPeriodMonths
+  )
+
+  if (isAfter(earliestVaccinationDate, endOfDay(today))) {
+    return t('pages.workList.notEligible', {
+      date: formatDate(earliestVaccinationDate, 'dd/MM/yyyy'),
+      interpolation: { escapeValue: false }
+    })
+  }
+
+  return t('pages.workList.lastVaccinationDate', {
+    date: formatDate(parsedVaccinationDate, 'dd/MM/yyyy'),
+    interpolation: { escapeValue: false }
+  })
+}
+
+function buildWorkListRows(cattle, t) {
+  const today = new Date()
+  const rows = cattle.map((animal, index) => {
+    const vaccinationDate = animal.lastVaccination?.cattleBCG
+    const vaccinationNote = buildVaccinationNote(vaccinationDate, today, t)
+
+    return {
+      ...animal,
+      number: index + 1,
+      dob: animal.dob ? formatDate(animal.dob, 'dd/MM/yyyy') : '',
+      vaccinationNote,
+      earTagParts: splitEarTag(animal.earTag)
+    }
+  })
   const lastFourCounts = rows.reduce((counts, row) => {
     const lastFour = row.earTagParts.lastFour
 
@@ -181,7 +232,7 @@ export const workListController = {
       return workOrderNotFound(h)
     }
 
-    const rows = buildWorkListRows(workList.cattle)
+    const rows = buildWorkListRows(workList.cattle, request.t)
     const sheets = buildWorkListSheets(rows)
     const farmName = workList.cphName || workList.cphCode || workList.name
 

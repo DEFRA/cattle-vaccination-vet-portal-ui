@@ -47,7 +47,9 @@
       "earTag": "Tag clust",
       "dob": "Dyddiad geni",
       "sex": "Rhyw",
-      "breed": "Brîd"
+      "breed": "Brîd",
+      "notEligible": "Ddim yn gymwys: dyddiad brechu cynharaf {{date}}",
+      "lastVaccinationDate": "Dyddiad y brechiad diwethaf {{date}}"
     },
     "cookies": {
       "title": "Cwcis"

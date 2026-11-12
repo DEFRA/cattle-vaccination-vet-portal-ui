@@ -21,6 +21,7 @@ Apply these standards to all changes in this repository. Follow the existing pat
 - Build for progressive enhancement: core service functionality must remain usable without JavaScript.
 - Prefer standard GOV.UK Design System patterns and GOV.UK Frontend components. Avoid custom CSS unless there is a clear need.
 - Build accessible services to at least WCAG 2.2 AA. Check keyboard use, semantic markup, accessible names, focus behavior, and other relevant criteria when changing UI.
+- All user-facing content must use i18n and have an English and Welsh version.
 
 ## Quality, security, and dependencies
 
