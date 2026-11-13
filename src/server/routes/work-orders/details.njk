@@ -1,6 +1,7 @@
 {% extends 'layouts/page.njk' %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
 
 {% block beforeContent %}
   {{ govukBackLink({
@@ -12,10 +13,12 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">{{ heading }}</h1>
+      <h1 class="govuk-heading-l">
+        {{ t("pages.workOrder.heading", { name: name }) }}{% if issueDate %}: {{ t("pages.workOrder.issueDate") }} {{ issueDate | formatDate("d MMMM yyyy") }}{% endif %}
+      </h1>
 
       <h2 class="govuk-heading-m">{{ t("pages.workOrder.cphInformation") }}</h2>
-      <p class="govuk-body govuk-!-margin-bottom-2">
+      <p class="govuk-body govuk-!-margin-bottom-8">
         {% if cphCode %}
           {{ t("pages.workOrder.cphNumber") }}: {{ cphCode }}<br>
         {% endif %}
@@ -23,28 +26,49 @@
           {{ t("pages.workOrder.address") }}: {{ address }}
         {% endif %}
       </p>
-      <p class="govuk-body govuk-!-margin-bottom-7">
-        <a class="govuk-link" href="#">{{ t("pages.workOrder.fullCphInformation") }}</a>
-      </p>
 
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
-      {% if workLists.length %}
-        <ul class="govuk-list govuk-list--bullet">
-          {% for workList in workLists %}
-            <li>
-              <a class="govuk-link" href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}">{{ workList.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
-      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}">
+      <p class="govuk-body">{{ t("pages.workOrder.vaccinationListPurpose") }}</p>
+      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}" data-create-work-list-form data-submitting-message="{{ t('pages.workOrder.creatingVaccinationList') }}">
         <input type="hidden" name="crumb" value="{{ crumb }}">
         {{ govukButton({
           text: t("pages.workOrder.createVaccinationList"),
           preventDoubleClick: true
         }) }}
+        <p class="govuk-body app-loading-status" role="status" data-create-work-list-status></p>
       </form>
+
+      {% for workList in workLists %}
+        {% if workList.createdDate %}
+          {% set workListDate = workList.createdDate | formatDate("d MMM yyyy", htmlLang) %}
+        {% else %}
+          {% set workListDate = workList.name %}
+        {% endif %}
+        {% set listPrefix = "worklist-" + (workList.id | urlencode) %}
+        <h2 class="govuk-heading-m" id="{{ listPrefix }}">{{ t("pages.workOrder.vaccinationListHeading", { date: workListDate, interpolation: { escapeValue: false } }) }}</h2>
+        {% set taskLink %}
+          <a class="govuk-link govuk-task-list__link"
+            href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}"
+            target="_blank" rel="noopener noreferrer"
+            aria-describedby="{{ listPrefix }} {{ listPrefix }}-1-status">{{ t("pages.workOrder.downloadVaccinationList") }}</a>
+        {% endset %}
+        {{ govukTaskList({
+          idPrefix: listPrefix,
+          items: [
+            {
+              classes: "govuk-task-list__item--with-link",
+              title: { html: taskLink },
+              status: {
+                tag: {
+                  text: t("pages.workOrder.listReady"),
+                  classes: "govuk-tag--grey"
+                }
+              }
+            }
+          ]
+        }) }}
+      {% endfor %}
     </div>
   </div>
 {% endblock %}
