@@ -10,7 +10,7 @@
 
   <div class="app-work-list__toolbar">
     <p><strong>{{ farmName }}</strong> &middot; {{ t("pages.workList.cattleCount", { count: cattleCount }) }} &middot; {{ t("pages.workList.pageCount", { count: totalPages }) }}</p>
-    <button type="button" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" data-print-work-list>{{ t("pages.workList.print") }}</button>
+    <button type="button" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" data-print-page>{{ t("pages.workList.print") }}</button>
   </div>
 
   {% for sheet in sheets %}

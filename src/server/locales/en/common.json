@@ -35,6 +35,7 @@
       "vaccinationLists": "Vaccination lists",
       "vaccinationListsHint": "Before visiting the farm, create an up-to-date vaccination list.",
       "createVaccinationList": "Create vaccination list",
+      "creatingVaccinationList": "Creating your vaccination list…",
       "listDate": "List date",
       "downloadLink": "Download link",
       "workListLink": "bTB vaccination list {{name}} {{date}} (opens in a new tab)"

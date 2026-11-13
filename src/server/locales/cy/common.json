@@ -35,6 +35,7 @@
       "vaccinationLists": "Rhestrau brechu",
       "vaccinationListsHint": "Cyn ymweld â’r fferm, crëwch restr frechu gyfredol.",
       "createVaccinationList": "Creu rhestr frechu",
+      "creatingVaccinationList": "Wrthi'n creu eich rhestr frechu…",
       "listDate": "Dyddiad y rhestr",
       "downloadLink": "Dolen lawrlwytho",
       "workListLink": "Rhestr frechu bTB {{name}} {{date}} (yn agor mewn tab newydd)"

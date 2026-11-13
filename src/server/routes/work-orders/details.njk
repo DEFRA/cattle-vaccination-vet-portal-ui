@@ -28,12 +28,13 @@
 
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
-      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}">
+      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}" data-create-work-list-form data-submitting-message="{{ t('pages.workOrder.creatingVaccinationList') }}">
         <input type="hidden" name="crumb" value="{{ crumb }}">
         {{ govukButton({
           text: t("pages.workOrder.createVaccinationList"),
           preventDoubleClick: true
         }) }}
+        <p class="govuk-body app-loading-status" role="status" data-create-work-list-status></p>
       </form>
 
       {% if workLists.length %}
