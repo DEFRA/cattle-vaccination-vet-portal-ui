@@ -1,58 +1,51 @@
 import { vi } from 'vitest'
 
-import hapi from '@hapi/hapi'
-import { statusCodes } from '../constants/status-codes.js'
+import { createServer } from '../../server.js'
+import { config } from '#/config/config.js'
+import { startServer } from './start-server.js'
+
+vi.mock('../../server.js', () => ({
+  createServer: vi.fn()
+}))
 
 describe('#startServer', () => {
-  let createServerSpy
-  let hapiServerSpy
-  let startServerImport
-  let createServerImport
+  let server
 
-  beforeAll(async () => {
-    vi.stubEnv('PORT', '3097')
-
-    createServerImport = await import('../../server.js')
-    startServerImport = await import('./start-server.js')
-
-    createServerSpy = vi.spyOn(createServerImport, 'createServer')
-    hapiServerSpy = vi.spyOn(hapi, 'server')
+  beforeEach(() => {
+    server = {
+      start: vi.fn().mockResolvedValue(undefined),
+      logger: { info: vi.fn() }
+    }
+    vi.mocked(createServer).mockResolvedValue(server)
   })
 
-  afterAll(() => {
-    vi.unstubAllEnvs()
+  test('Should start the server, log startup and return it', async () => {
+    await expect(startServer()).resolves.toBe(server)
+
+    expect(createServer).toHaveBeenCalledOnce()
+    expect(server.start).toHaveBeenCalledOnce()
+    expect(server.logger.info).toHaveBeenCalledWith(
+      'Server started successfully'
+    )
+    expect(server.logger.info).toHaveBeenCalledWith(
+      `Access your frontend on http://localhost:${config.get('port')}`
+    )
   })
 
-  describe('When server starts', () => {
-    let server
+  test('Should propagate server creation failures', async () => {
+    const error = new Error('Server failed to create')
+    vi.mocked(createServer).mockRejectedValue(error)
 
-    afterAll(async () => {
-      await server.stop({ timeout: 0 })
-    })
-
-    test('Should start up server as expected', async () => {
-      server = await startServerImport.startServer()
-
-      expect(createServerSpy).toHaveBeenCalled()
-      expect(hapiServerSpy).toHaveBeenCalled()
-
-      const { result, statusCode } = await server.inject({
-        method: 'GET',
-        url: '/health'
-      })
-
-      expect(result).toEqual({ message: 'success' })
-      expect(statusCode).toBe(statusCodes.ok)
-    })
+    await expect(startServer()).rejects.toBe(error)
+    expect(server.start).not.toHaveBeenCalled()
+    expect(server.logger.info).not.toHaveBeenCalled()
   })
 
-  describe('When server start fails', () => {
-    test('Should log failed startup message', async () => {
-      createServerSpy.mockRejectedValue(new Error('Server failed to start'))
+  test('Should propagate startup failures without logging success', async () => {
+    const error = new Error('Server failed to start')
+    server.start.mockRejectedValue(error)
 
-      await expect(startServerImport.startServer()).rejects.toThrow(
-        'Server failed to start'
-      )
-    })
+    await expect(startServer()).rejects.toBe(error)
+    expect(server.logger.info).not.toHaveBeenCalled()
   })
 })

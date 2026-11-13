@@ -49,6 +49,8 @@
       "dob": "Dyddiad geni",
       "sex": "Rhyw",
       "breed": "Brîd",
+      "notEligible": "Ddim yn gymwys: dyddiad brechu cynharaf {{date}}",
+      "lastVaccinationDate": "Dyddiad y brechiad diwethaf {{date}}",
       "cattleCount": "{{count}} o wartheg",
       "pageCount": "{{count}} tudalen",
       "pageCount_two": "{{count}} dudalen",
