@@ -9,8 +9,8 @@
 <body class="app-work-list">
 
   <div class="app-work-list__toolbar">
-    <p><strong>{{ farmName }}</strong> &middot; {{ cattleCount }} cattle &middot; {{ totalPages }} page{% if totalPages != 1 %}s{% endif %}</p>
-    <button type="button" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" data-print-work-list>Print this list</button>
+    <p><strong>{{ farmName }}</strong> &middot; {{ t("pages.workList.cattleCount", { count: cattleCount }) }} &middot; {{ t("pages.workList.pageCount", { count: totalPages }) }}</p>
+    <button type="button" class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" data-print-work-list>{{ t("pages.workList.print") }}</button>
   </div>
 
   {% for sheet in sheets %}
@@ -19,24 +19,24 @@
 
       <div class="app-work-list__sheet-header">
         {% if pageNumber == 1 %}
-          <h1 class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ farmName }} - bTB vaccination list</h1>
+          <h1 class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ t("pages.workList.heading", { name: farmName, interpolation: { escapeValue: false } }) }}</h1>
         {% else %}
-          <span class="app-work-list__sheet-cph">{{ farmName }} - CPH: {{ cphCode }}</span>
+          <span class="app-work-list__sheet-cph">{{ farmName }} - {{ t("pages.workList.cph") }}: {{ cphCode }}</span>
         {% endif %}
         <span class="app-work-list__range">{{ sheet.range }}</span>
       </div>
 
       {% if pageNumber == 1 %}
         <div class="govuk-grid-row app-work-list__meta">
-          <div class="govuk-grid-column-one-third"><strong>CPH:</strong><br>{{ cphCode }}</div>
-          <div class="govuk-grid-column-one-third"><strong>Cattle on this list:</strong><br>{{ cattleCount }}</div>
-          <div class="govuk-grid-column-one-third"><strong>Date list was made:</strong><br>{% if createdDate %}{{ createdDate | formatDate("EEEE d MMMM yyyy") }}{% endif %}</div>
+          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.cph") }}:</strong><br>{{ cphCode }}</div>
+          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.cattleOnList") }}:</strong><br>{{ cattleCount }}</div>
+          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.dateListMade") }}:</strong><br>{% if createdDate %}{{ createdDate | formatDate("EEEE d MMMM yyyy", htmlLang) }}{% endif %}</div>
         </div>
 
         <table class="app-work-list__entry-table app-work-list__entry-table--date">
           <tbody>
             <tr>
-              <th scope="row">Vaccination date:</th>
+              <th scope="row">{{ t("pages.workList.vaccinationDate") }}:</th>
               <td></td>
             </tr>
           </tbody>
@@ -45,11 +45,11 @@
         <table class="app-work-list__entry-table">
           <thead>
             <tr>
-              <th scope="col" class="app-work-list__batch">Batch</th>
-              <th scope="col">Vaccine batch number:</th>
-              <th scope="col">Vaccine expiry date:</th>
-              <th scope="col">Diluent batch number:</th>
-              <th scope="col">Diluent expiry date:</th>
+              <th scope="col" class="app-work-list__batch">{{ t("pages.workList.batch") }}</th>
+              <th scope="col">{{ t("pages.workList.vaccineBatchNumber") }}:</th>
+              <th scope="col">{{ t("pages.workList.vaccineExpiryDate") }}:</th>
+              <th scope="col">{{ t("pages.workList.diluentBatchNumber") }}:</th>
+              <th scope="col">{{ t("pages.workList.diluentExpiryDate") }}:</th>
             </tr>
           </thead>
           <tbody>
@@ -66,12 +66,12 @@
       <table class="app-work-list__record-table">
         <thead>
           <tr>
-            <th scope="col" class="app-work-list__number">No.</th>
-            <th scope="col" class="app-work-list__ear-tag">Ear tag number</th>
-            <th scope="col" class="app-work-list__dob">DOB</th>
-            <th scope="col" class="app-work-list__sex">Sex</th>
-            <th scope="col" class="app-work-list__breed">Breed</th>
-            <th scope="col" class="app-work-list__notes">Notes/vaccine batch</th>
+            <th scope="col" class="app-work-list__number">{{ t("pages.workList.number") }}</th>
+            <th scope="col" class="app-work-list__ear-tag">{{ t("pages.workList.earTagNumber") }}</th>
+            <th scope="col" class="app-work-list__dob">{{ t("pages.workList.dob") }}</th>
+            <th scope="col" class="app-work-list__sex">{{ t("pages.workList.sex") }}</th>
+            <th scope="col" class="app-work-list__breed">{{ t("pages.workList.breed") }}</th>
+            <th scope="col" class="app-work-list__notes">{{ t("pages.workList.notesVaccineBatch") }}</th>
           </tr>
         </thead>
         {% for row in sheet.rows %}
@@ -81,11 +81,11 @@
               <td class="app-work-list__ear-tag">
                 <span class="app-work-list__ear-tag-value">
                   {{ row.earTagParts.prefix }}<span class="app-work-list__last-four{% if row.hasDuplicateLastFour %} app-work-list__last-four--duplicate{% endif %}"
-                    {% if row.hasDuplicateLastFour %}title="Another animal on this farm shares the last 4 digits of this ear tag"{% endif %}>{{ row.earTagParts.lastFour }}</span>
+                    {% if row.hasDuplicateLastFour %}title="{{ t("pages.workList.duplicateEarTag") }}"{% endif %}>{{ row.earTagParts.lastFour }}</span>
                 </span>
               </td>
               <td class="app-work-list__dob">{{ row.dob }}</td>
-              <td class="app-work-list__sex">{{ row.sex.substr(0, 1) if row.sex }}</td>
+              <td class="app-work-list__sex">{% if row.sex == "Male" %}{{ t("pages.workList.maleAbbreviation") }}{% elif row.sex == "Female" %}{{ t("pages.workList.femaleAbbreviation") }}{% elif row.sex %}{{ row.sex.substr(0, 1) }}{% endif %}</td>
               <td class="app-work-list__breed">{{ row.breed }}</td>
               <td class="app-work-list__notes"></td>
             </tr>
@@ -95,7 +95,7 @@
 
       <div class="app-work-list__sheet-footer">
         <span class="app-work-list__range app-work-list__range--left">{{ sheet.range }}</span>
-        <span class="app-work-list__page-number">Page {{ pageNumber }} of {{ totalPages }}</span>
+        <span class="app-work-list__page-number">{{ t("pages.workList.pageNumber", { page: pageNumber, total: totalPages }) }}</span>
         <span class="app-work-list__range">{{ sheet.range }}</span>
       </div>
     </div>
@@ -103,19 +103,19 @@
 
   <div class="app-work-list__sheet app-work-list__sheet--continued">
     <div class="app-work-list__sheet-header app-work-list__blank-header">
-      <span class="app-work-list__sheet-cph">{{ farmName }} - CPH: {{ cphCode }}</span>
-      <span class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ farmName }} - Blank page</span>
-      <span class="app-work-list__range">Blank page</span>
+      <span class="app-work-list__sheet-cph">{{ farmName }} - {{ t("pages.workList.cph") }}: {{ cphCode }}</span>
+      <span class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ t("pages.workList.blankPageTitle", { name: farmName, interpolation: { escapeValue: false } }) }}</span>
+      <span class="app-work-list__range">{{ t("pages.workList.blankPage") }}</span>
     </div>
-    <p>This page left blank to capture unexpected cattle.</p>
+    <p>{{ t("pages.workList.blankPageDescription") }}</p>
     <table class="app-work-list__record-table">
       <thead>
         <tr>
-          <th scope="col" class="app-work-list__ear-tag">Ear tag number</th>
-          <th scope="col" class="app-work-list__dob">DOB</th>
-          <th scope="col" class="app-work-list__sex">Sex</th>
-          <th scope="col" class="app-work-list__breed">Breed</th>
-          <th scope="col" class="app-work-list__notes">Remarks</th>
+          <th scope="col" class="app-work-list__ear-tag">{{ t("pages.workList.earTagNumber") }}</th>
+          <th scope="col" class="app-work-list__dob">{{ t("pages.workList.dob") }}</th>
+          <th scope="col" class="app-work-list__sex">{{ t("pages.workList.sex") }}</th>
+          <th scope="col" class="app-work-list__breed">{{ t("pages.workList.breed") }}</th>
+          <th scope="col" class="app-work-list__notes">{{ t("pages.workList.remarks") }}</th>
         </tr>
       </thead>
       <tbody>
@@ -125,9 +125,9 @@
       </tbody>
     </table>
     <div class="app-work-list__sheet-footer">
-      <span class="app-work-list__range app-work-list__range--left">Blank page</span>
-      <span class="app-work-list__page-number">Page {{ totalPages }} of {{ totalPages }}</span>
-      <span class="app-work-list__range">Blank page</span>
+      <span class="app-work-list__range app-work-list__range--left">{{ t("pages.workList.blankPage") }}</span>
+      <span class="app-work-list__page-number">{{ t("pages.workList.pageNumber", { page: totalPages, total: totalPages }) }}</span>
+      <span class="app-work-list__range">{{ t("pages.workList.blankPage") }}</span>
     </div>
   </div>
 

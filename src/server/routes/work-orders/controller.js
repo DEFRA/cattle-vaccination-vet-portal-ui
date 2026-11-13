@@ -186,7 +186,10 @@ export const workListController = {
     const farmName = workList.cphName || workList.cphCode || workList.name
 
     return h.view('work-orders/work-list', {
-      pageTitle: request.t('pages.workList.title', { name: farmName }),
+      pageTitle: request.t('pages.workList.title', {
+        name: farmName,
+        interpolation: { escapeValue: false }
+      }),
       farmName,
       cphCode: workList.cphCode,
       createdDate: workList.createdDate,

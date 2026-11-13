@@ -20,8 +20,7 @@
       "title": "Gorchmynion gwaith",
       "heading": "Gorchmynion gwaith",
       "address": "Cyfeiriad",
-      "continueWork": "Parhau â'r gwaith",
-      "cphDetails": "Manylion y CPH",
+      "viewWork": "Gweld y gwaith",
       "empty": "Nid oes unrhyw orchmynion gwaith."
     },
     "workOrder": {
@@ -47,7 +46,31 @@
       "earTag": "Tag clust",
       "dob": "Dyddiad geni",
       "sex": "Rhyw",
-      "breed": "Brîd"
+      "breed": "Brîd",
+      "cattleCount": "{{count}} o wartheg",
+      "pageCount": "{{count}} tudalen",
+      "pageCount_two": "{{count}} dudalen",
+      "print": "Argraffu'r rhestr hon",
+      "cph": "CPH",
+      "cattleOnList": "Gwartheg ar y rhestr hon",
+      "dateListMade": "Dyddiad creu'r rhestr",
+      "vaccinationDate": "Dyddiad brechu",
+      "batch": "Swp",
+      "vaccineBatchNumber": "Rhif swp y brechlyn",
+      "vaccineExpiryDate": "Dyddiad dod i ben y brechlyn",
+      "diluentBatchNumber": "Rhif swp yr hydoddyn",
+      "diluentExpiryDate": "Dyddiad dod i ben yr hydoddyn",
+      "number": "Rhif",
+      "earTagNumber": "Rhif tag clust",
+      "notesVaccineBatch": "Nodiadau/swp y brechlyn",
+      "duplicateEarTag": "Mae gan anifail arall ar y fferm hon yr un 4 digid olaf ar ei dag clust",
+      "maleAbbreviation": "G",
+      "femaleAbbreviation": "B",
+      "pageNumber": "Tudalen {{page}} o {{total}}",
+      "blankPage": "Tudalen wag",
+      "blankPageTitle": "{{name}} - Tudalen wag",
+      "blankPageDescription": "Gadawyd y dudalen hon yn wag i gofnodi gwartheg annisgwyl.",
+      "remarks": "Sylwadau"
     },
     "cookies": {
       "title": "Cwcis"

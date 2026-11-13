@@ -20,8 +20,7 @@
       "title": "Work orders",
       "heading": "Work orders",
       "address": "Address",
-      "continueWork": "Continue work",
-      "cphDetails": "CPH details",
+      "viewWork": "View work",
       "empty": "There are no work orders."
     },
     "workOrder": {
@@ -47,7 +46,31 @@
       "earTag": "Ear tag",
       "dob": "DOB",
       "sex": "Sex",
-      "breed": "Breed"
+      "breed": "Breed",
+      "cattleCount": "{{count}} cattle",
+      "pageCount": "{{count}} pages",
+      "pageCount_one": "{{count}} page",
+      "print": "Print this list",
+      "cph": "CPH",
+      "cattleOnList": "Cattle on this list",
+      "dateListMade": "Date list was made",
+      "vaccinationDate": "Vaccination date",
+      "batch": "Batch",
+      "vaccineBatchNumber": "Vaccine batch number",
+      "vaccineExpiryDate": "Vaccine expiry date",
+      "diluentBatchNumber": "Diluent batch number",
+      "diluentExpiryDate": "Diluent expiry date",
+      "number": "No.",
+      "earTagNumber": "Ear tag number",
+      "notesVaccineBatch": "Notes/vaccine batch",
+      "duplicateEarTag": "Another animal on this farm shares the last 4 digits of this ear tag",
+      "maleAbbreviation": "M",
+      "femaleAbbreviation": "F",
+      "pageNumber": "Page {{page}} of {{total}}",
+      "blankPage": "Blank page",
+      "blankPageTitle": "{{name}} - Blank page",
+      "blankPageDescription": "This page left blank to capture unexpected cattle.",
+      "remarks": "Remarks"
     },
     "cookies": {
       "title": "Cookies"

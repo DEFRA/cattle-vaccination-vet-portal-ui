@@ -21,6 +21,7 @@ Apply these standards to all changes in this repository. Follow the existing pat
 - Build for progressive enhancement: core service functionality must remain usable without JavaScript.
 - Prefer standard GOV.UK Design System patterns and GOV.UK Frontend components. Avoid custom CSS unless there is a clear need.
 - Build accessible services to at least WCAG 2.2 AA. Check keyboard use, semantic markup, accessible names, focus behavior, and other relevant criteria when changing UI.
+- For i18next plural translations, use the unsuffixed key as the language's default form and add suffixed keys only for plural categories that need different wording (for example, English `key` and `key_one`, or Welsh `key` and `key_two`).
 
 ## Quality, security, and dependencies
 
