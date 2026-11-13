@@ -20,8 +20,7 @@
       "title": "Gorchmynion gwaith",
       "heading": "Gorchmynion gwaith",
       "address": "Cyfeiriad",
-      "continueWork": "Parhau â'r gwaith",
-      "cphDetails": "Manylion y CPH",
+      "viewWork": "Gweld y gwaith",
       "empty": "Nid oes unrhyw orchmynion gwaith."
     },
     "workOrder": {
@@ -33,12 +32,14 @@
       "cphNumber": "Rhif CPH",
       "address": "Cyfeiriad",
       "fullCphInformation": "Gwybodaeth CPH lawn",
-      "vaccinationLists": "Rhestrau brechu",
-      "vaccinationListsHint": "Cyn ymweld â’r fferm, crëwch restr frechu gyfredol.",
+      "vaccinationLists": "Paratoi ar gyfer yr ymweliad â'r fferm",
+      "vaccinationListsHint": "Cyn mynd i'r fferm, crëwch restr frechu gyfredol a'r ffurflen adrodd gyfatebol.",
+      "vaccinationListPurpose": "Crëwch restr frechu i gadarnhau nifer y gwartheg i'w brechu.",
       "createVaccinationList": "Creu rhestr frechu",
-      "listDate": "Dyddiad y rhestr",
-      "downloadLink": "Dolen lawrlwytho",
-      "workListLink": "Rhestr frechu bTB {{name}} {{date}} (yn agor mewn tab newydd)"
+      "creatingVaccinationList": "Wrthi'n creu eich rhestr frechu…",
+      "vaccinationListHeading": "Rhestr frechu: {{date}}",
+      "downloadVaccinationList": "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)",
+      "listReady": "Yn barod"
     },
     "workList": {
       "title": "{{name}} - rhestr frechu bTB",
@@ -49,7 +50,31 @@
       "sex": "Rhyw",
       "breed": "Brîd",
       "notEligible": "Ddim yn gymwys: dyddiad brechu cynharaf {{date}}",
-      "lastVaccinationDate": "Dyddiad y brechiad diwethaf {{date}}"
+      "lastVaccinationDate": "Dyddiad y brechiad diwethaf {{date}}",
+      "cattleCount": "{{count}} o wartheg",
+      "pageCount": "{{count}} tudalen",
+      "pageCount_two": "{{count}} dudalen",
+      "print": "Argraffu'r rhestr hon",
+      "cph": "CPH",
+      "cattleOnList": "Gwartheg ar y rhestr hon",
+      "dateListMade": "Dyddiad creu'r rhestr",
+      "vaccinationDate": "Dyddiad brechu",
+      "batch": "Swp",
+      "vaccineBatchNumber": "Rhif swp y brechlyn",
+      "vaccineExpiryDate": "Dyddiad dod i ben y brechlyn",
+      "diluentBatchNumber": "Rhif swp yr hydoddyn",
+      "diluentExpiryDate": "Dyddiad dod i ben yr hydoddyn",
+      "number": "Rhif",
+      "earTagNumber": "Rhif tag clust",
+      "notesVaccineBatch": "Nodiadau/swp y brechlyn",
+      "duplicateEarTag": "Mae gan anifail arall ar y fferm hon yr un 4 digid olaf ar ei dag clust",
+      "maleAbbreviation": "G",
+      "femaleAbbreviation": "B",
+      "pageNumber": "Tudalen {{page}} o {{total}}",
+      "blankPage": "Tudalen wag",
+      "blankPageTitle": "{{name}} - Tudalen wag",
+      "blankPageDescription": "Gadawyd y dudalen hon yn wag i gofnodi gwartheg annisgwyl.",
+      "remarks": "Sylwadau"
     },
     "cookies": {
       "title": "Cwcis"

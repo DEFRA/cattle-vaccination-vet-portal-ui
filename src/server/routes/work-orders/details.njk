@@ -1,6 +1,7 @@
 {% extends 'layouts/page.njk' %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
 
 {% block beforeContent %}
   {{ govukBackLink({
@@ -28,48 +29,46 @@
 
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
-      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}">
+      <p class="govuk-body">{{ t("pages.workOrder.vaccinationListPurpose") }}</p>
+      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}" data-create-work-list-form data-submitting-message="{{ t('pages.workOrder.creatingVaccinationList') }}">
         <input type="hidden" name="crumb" value="{{ crumb }}">
         {{ govukButton({
           text: t("pages.workOrder.createVaccinationList"),
           preventDoubleClick: true
         }) }}
+        <p class="govuk-body app-loading-status" role="status" data-create-work-list-status></p>
       </form>
 
-      {% if workLists.length %}
-        <table class="govuk-table govuk-!-margin-bottom-8 app-table-stacked">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header app-table-stacked__date">{{ t("pages.workOrder.listDate") }}</th>
-              <th scope="col" class="govuk-table__header">{{ t("pages.workOrder.downloadLink") }}</th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-            {% for workList in workLists %}
-              {% if workList.createdDate %}
-                {% set workListDate = workList.createdDate | formatDate("d MMM yyyy") %}
-              {% else %}
-                {% set workListDate = workList.name %}
-              {% endif %}
-              <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">
-                  <span class="app-table-stacked__label">{{ t("pages.workOrder.listDate") }}: </span>
-                  {{ workListDate }}
-                </th>
-                <td class="govuk-table__cell">
-                  <span class="app-table-stacked__label app-table-stacked__label--block govuk-!-font-weight-bold">{{ t("pages.workOrder.downloadLink") }}</span>
-                  <a class="govuk-link"{% if loop.first %} id="latest-list"{% endif %} href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}" target="_blank" rel="noopener noreferrer">
-                    {{ t("pages.workOrder.workListLink", {
-                      name: name,
-                      date: workListDate
-                    }) }}
-                  </a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% endif %}
+      {% for workList in workLists %}
+        {% if workList.createdDate %}
+          {% set workListDate = workList.createdDate | formatDate("d MMM yyyy", htmlLang) %}
+        {% else %}
+          {% set workListDate = workList.name %}
+        {% endif %}
+        {% set listPrefix = "worklist-" + (workList.id | urlencode) %}
+        <h2 class="govuk-heading-m" id="{{ listPrefix }}">{{ t("pages.workOrder.vaccinationListHeading", { date: workListDate, interpolation: { escapeValue: false } }) }}</h2>
+        {% set taskLink %}
+          <a class="govuk-link govuk-task-list__link"
+            href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}"
+            target="_blank" rel="noopener noreferrer"
+            aria-describedby="{{ listPrefix }} {{ listPrefix }}-1-status">{{ t("pages.workOrder.downloadVaccinationList") }}</a>
+        {% endset %}
+        {{ govukTaskList({
+          idPrefix: listPrefix,
+          items: [
+            {
+              classes: "govuk-task-list__item--with-link",
+              title: { html: taskLink },
+              status: {
+                tag: {
+                  text: t("pages.workOrder.listReady"),
+                  classes: "govuk-tag--grey"
+                }
+              }
+            }
+          ]
+        }) }}
+      {% endfor %}
     </div>
   </div>
 {% endblock %}

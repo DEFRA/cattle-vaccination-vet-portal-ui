@@ -192,9 +192,10 @@ export const workOrderController = {
 export const createWorkListController = {
   async handler(request, h) {
     const workOrderId = request.params.workOrderId
+    let workList
 
     try {
-      await backendRequest(
+      workList = await backendRequest(
         `/workorders/${encodeURIComponent(workOrderId)}/work-lists`,
         { method: 'POST' }
       )
@@ -206,8 +207,12 @@ export const createWorkListController = {
       return workOrderNotFound(h)
     }
 
+    const headingId = `worklist-${encodeURIComponent(workList.id)}`
+
     return h
-      .redirect(`/work-orders/${encodeURIComponent(workOrderId)}#latest-list`)
+      .redirect(
+        `/work-orders/${encodeURIComponent(workOrderId)}#${encodeURIComponent(headingId)}`
+      )
       .code(303)
   }
 }
@@ -237,7 +242,10 @@ export const workListController = {
     const farmName = workList.cphName || workList.cphCode || workList.name
 
     return h.view('work-orders/work-list', {
-      pageTitle: request.t('pages.workList.title', { name: farmName }),
+      pageTitle: request.t('pages.workList.title', {
+        name: farmName,
+        interpolation: { escapeValue: false }
+      }),
       farmName,
       cphCode: workList.cphCode,
       createdDate: workList.createdDate,

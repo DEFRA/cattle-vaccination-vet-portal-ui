@@ -20,8 +20,7 @@
       "title": "Work orders",
       "heading": "Work orders",
       "address": "Address",
-      "continueWork": "Continue work",
-      "cphDetails": "CPH details",
+      "viewWork": "View work",
       "empty": "There are no work orders."
     },
     "workOrder": {
@@ -33,12 +32,14 @@
       "cphNumber": "CPH number",
       "address": "Address",
       "fullCphInformation": "Full CPH information",
-      "vaccinationLists": "Vaccination lists",
-      "vaccinationListsHint": "Before visiting the farm, create an up-to-date vaccination list.",
+      "vaccinationLists": "Prepare for the farm visit",
+      "vaccinationListsHint": "Before heading to the farm, create an up-to-date vaccination list and respective report form.",
+      "vaccinationListPurpose": "Create a vaccination list to confirm the number of cattle to vaccinate.",
       "createVaccinationList": "Create vaccination list",
-      "listDate": "List date",
-      "downloadLink": "Download link",
-      "workListLink": "bTB vaccination list {{name}} {{date}} (opens in a new tab)"
+      "creatingVaccinationList": "Creating your vaccination list…",
+      "vaccinationListHeading": "Vaccination list: {{date}}",
+      "downloadVaccinationList": "Download vaccination list (opens in a new tab)",
+      "listReady": "Ready"
     },
     "workList": {
       "title": "{{name}} - bTB vaccination list",
@@ -49,7 +50,31 @@
       "sex": "Sex",
       "breed": "Breed",
       "notEligible": "Not eligible: earliest vaccination date {{date}}",
-      "lastVaccinationDate": "Last vaccination date {{date}}"
+      "lastVaccinationDate": "Last vaccination date {{date}}",
+      "cattleCount": "{{count}} cattle",
+      "pageCount": "{{count}} pages",
+      "pageCount_one": "{{count}} page",
+      "print": "Print this list",
+      "cph": "CPH",
+      "cattleOnList": "Cattle on this list",
+      "dateListMade": "Date list was made",
+      "vaccinationDate": "Vaccination date",
+      "batch": "Batch",
+      "vaccineBatchNumber": "Vaccine batch number",
+      "vaccineExpiryDate": "Vaccine expiry date",
+      "diluentBatchNumber": "Diluent batch number",
+      "diluentExpiryDate": "Diluent expiry date",
+      "number": "No.",
+      "earTagNumber": "Ear tag number",
+      "notesVaccineBatch": "Notes/vaccine batch",
+      "duplicateEarTag": "Another animal on this farm shares the last 4 digits of this ear tag",
+      "maleAbbreviation": "M",
+      "femaleAbbreviation": "F",
+      "pageNumber": "Page {{page}} of {{total}}",
+      "blankPage": "Blank page",
+      "blankPageTitle": "{{name}} - Blank page",
+      "blankPageDescription": "This page left blank to capture unexpected cattle.",
+      "remarks": "Remarks"
     },
     "cookies": {
       "title": "Cookies"
