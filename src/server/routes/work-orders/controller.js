@@ -141,9 +141,10 @@ export const workOrderController = {
 export const createWorkListController = {
   async handler(request, h) {
     const workOrderId = request.params.workOrderId
+    let workList
 
     try {
-      await backendRequest(
+      workList = await backendRequest(
         `/workorders/${encodeURIComponent(workOrderId)}/work-lists`,
         { method: 'POST' }
       )
@@ -155,8 +156,12 @@ export const createWorkListController = {
       return workOrderNotFound(h)
     }
 
+    const headingId = `worklist-${encodeURIComponent(workList.id)}`
+
     return h
-      .redirect(`/work-orders/${encodeURIComponent(workOrderId)}#latest-list`)
+      .redirect(
+        `/work-orders/${encodeURIComponent(workOrderId)}#${encodeURIComponent(headingId)}`
+      )
       .code(303)
   }
 }

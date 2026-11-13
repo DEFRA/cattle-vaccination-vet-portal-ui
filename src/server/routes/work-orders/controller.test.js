@@ -127,22 +127,40 @@ describe('#workOrderController', () => {
     )
     expect(information).toContain('CPH number: 40/715/9200')
     expect(information).toContain('Address: 1 Farm Lane, Testtown, ZZ1 1ZZ')
-    expect($page('#vaccination-lists').text()).toBe('Vaccination lists')
+    expect($page('#vaccination-lists').text()).toBe(
+      'Prepare for the farm visit'
+    )
     expect(result).toContain(
-      'Before visiting the farm, create an up-to-date vaccination list.'
+      'Before heading to the farm, create an up-to-date vaccination list and respective report form.'
+    )
+    expect(result).toContain(
+      'Create a vaccination list to confirm the number of cattle to vaccinate.'
     )
     const form = $page('form[action^="/work-orders/"]')
-    const workListLink = $page('#latest-list')
+    const workListLink = $page('.govuk-task-list__link')
 
-    expect($page('.app-table-stacked__date').text()).toBe('List date')
+    expect($page('h2[id^="worklist-"]').text()).toBe(
+      'Vaccination list: 8 Oct 2026'
+    )
+    expect($page('.govuk-task-list__status').text().trim()).toBe('Ready')
+    expect(
+      $page('.govuk-task-list__status .govuk-tag.govuk-tag--grey')
+    ).toHaveLength(1)
+    expect($page('.govuk-task-list__status').hasClass('govuk-tag--grey')).toBe(
+      false
+    )
+    expect($page('.govuk-table')).toHaveLength(0)
     expect(workListLink.text()).toContain(
-      'bTB vaccination list Hill Farm 8 Oct 2026 (opens in a new tab)'
+      'Download vaccination list (opens in a new tab)'
     )
     expect(workListLink.attr('href')).toBe(
       '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     )
     expect(workListLink.attr('target')).toBe('_blank')
     expect(workListLink.attr('rel')).toBe('noopener noreferrer')
+    expect(workListLink.attr('aria-describedby')).toBe(
+      'worklist-a0W000000000002 worklist-a0W000000000002-1-status'
+    )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')
     expect(form.find('input[name="crumb"]').val()).toBeTruthy()
@@ -174,6 +192,65 @@ describe('#workOrderController', () => {
     expect(result).not.toContain('Email address')
     expect(result).not.toContain('Work lists')
     expect(result).not.toContain('Full CPH information')
+  })
+
+  test('Should show each vaccination list in newest-first order with unique task descriptions', async () => {
+    backendRequest.mockResolvedValue({
+      id: 'CV WorkOrder 2',
+      cph: { locationName: 'Hill Farm' },
+      workLists: [
+        { id: 'older/list', name: 'Older list', createdDate: '2026-03-08' },
+        { id: 'new list', name: 'New list', createdDate: '2026-10-08' },
+        { id: 'undated', name: '<Undated & list>', createdDate: null }
+      ]
+    })
+
+    const { result, statusCode } = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202?lang=cy'
+    })
+    expect(statusCode).toBe(statusCodes.ok)
+
+    const $page = load(result)
+    const lists = $page('.govuk-task-list')
+    expect(lists).toHaveLength(3)
+    expect(
+      $page('h2[id^="worklist-"]')
+        .map((_, h) => $page(h).text())
+        .get()
+    ).toEqual([
+      'Rhestr frechu: 8 Hyd 2026',
+      'Rhestr frechu: 8 Maw 2026',
+      'Rhestr frechu: <Undated & list>'
+    ])
+    expect($page('h2[id^="worklist-"]').last().find('undated')).toHaveLength(0)
+    expect(
+      lists
+        .find('.govuk-task-list__status')
+        .map((_, s) => $page(s).text().trim())
+        .get()
+    ).toEqual(['Yn barod', 'Yn barod', 'Yn barod'])
+    const links = lists.find('a')
+    expect(links.eq(0).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/new%20list'
+    )
+    expect(links.eq(1).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/older%2Flist'
+    )
+    expect($page('h2[id^="worklist-"]').first().attr('id')).toBe(
+      'worklist-new%20list'
+    )
+    expect($page('h2[id^="worklist-"]').eq(1).attr('id')).toBe(
+      'worklist-older%2Flist'
+    )
+    expect(links.eq(0).attr('id')).toBeUndefined()
+    expect(links.eq(1).attr('id')).toBeUndefined()
+    expect(links.eq(1).attr('aria-describedby')).toBe(
+      'worklist-older%2Flist worklist-older%2Flist-1-status'
+    )
+    expect(links.eq(0).text().trim()).toBe(
+      "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)"
+    )
   })
 
   test('Should provide a Welsh progress message', async () => {
@@ -209,47 +286,66 @@ describe('#workOrderController', () => {
     expect(statusCode).toBe(statusCodes.notFound)
   })
 
-  test('Should create a work list and return to the work order', async () => {
-    backendRequest.mockResolvedValue({
-      id: 'CV WorkOrder 2',
-      cph: { locationName: 'Hill Farm' },
-      workLists: []
-    })
+  test.each(['a0W000000000003', 'new list/3'])(
+    'Should create work list %s and return to its heading',
+    async (workListId) => {
+      backendRequest.mockResolvedValue({
+        id: 'CV WorkOrder 2',
+        cph: { locationName: 'Hill Farm' },
+        workLists: []
+      })
 
-    const page = await server.inject({
-      method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202'
-    })
-    const $page = load(page.result)
-    const form = $page('form[action^="/work-orders/"]')
-    const crumbCookie = page.headers['set-cookie'].find((value) =>
-      value.startsWith('crumb=')
-    )
+      const page = await server.inject({
+        method: 'GET',
+        url: '/work-orders/CV%20WorkOrder%202'
+      })
+      const $page = load(page.result)
+      const form = $page('form[action^="/work-orders/"]')
+      const crumbCookie = page.headers['set-cookie'].find((value) =>
+        value.startsWith('crumb=')
+      )
 
-    backendRequest.mockClear()
-    backendRequest.mockResolvedValue({ id: 'a0W000000000003' })
+      backendRequest.mockClear()
+      backendRequest.mockResolvedValue({ id: workListId })
 
-    const response = await server.inject({
-      method: 'POST',
-      url: '/work-orders/CV%20WorkOrder%202',
-      headers: {
-        cookie: crumbCookie.split(';')[0],
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      payload: new URLSearchParams({
-        crumb: form.find('input[name="crumb"]').val()
-      }).toString()
-    })
+      const response = await server.inject({
+        method: 'POST',
+        url: '/work-orders/CV%20WorkOrder%202',
+        headers: {
+          cookie: crumbCookie.split(';')[0],
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        payload: new URLSearchParams({
+          crumb: form.find('input[name="crumb"]').val()
+        }).toString()
+      })
 
-    expect(response.statusCode).toBe(303)
-    expect(response.headers.location).toBe(
-      '/work-orders/CV%20WorkOrder%202#latest-list'
-    )
-    expect(backendRequest).toHaveBeenCalledWith(
-      '/workorders/CV%20WorkOrder%202/work-lists',
-      { method: 'POST' }
-    )
-  })
+      expect(response.statusCode).toBe(303)
+      const headingId = `worklist-${encodeURIComponent(workListId)}`
+      expect(response.headers.location).toBe(
+        `/work-orders/CV%20WorkOrder%202#${encodeURIComponent(headingId)}`
+      )
+      expect(backendRequest).toHaveBeenCalledWith(
+        '/workorders/CV%20WorkOrder%202/work-lists',
+        { method: 'POST' }
+      )
+      backendRequest.mockResolvedValue({
+        id: 'CV WorkOrder 2',
+        cph: { locationName: 'Hill Farm' },
+        workLists: [
+          { id: workListId, name: 'New list', createdDate: '2026-11-13' }
+        ]
+      })
+      const updatedPage = await server.inject({
+        method: 'GET',
+        url: response.headers.location.split('#')[0]
+      })
+      expect(updatedPage.statusCode).toBe(statusCodes.ok)
+      expect(load(updatedPage.result)('h2[id^="worklist-"]').attr('id')).toBe(
+        decodeURIComponent(response.headers.location.split('#')[1])
+      )
+    }
+  )
 
   test.each(['missing', 'invalid'])(
     'Should reject a work list submission with a %s crumb',

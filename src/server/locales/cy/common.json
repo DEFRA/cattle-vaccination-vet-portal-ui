@@ -32,13 +32,14 @@
       "cphNumber": "Rhif CPH",
       "address": "Cyfeiriad",
       "fullCphInformation": "Gwybodaeth CPH lawn",
-      "vaccinationLists": "Rhestrau brechu",
-      "vaccinationListsHint": "Cyn ymweld â’r fferm, crëwch restr frechu gyfredol.",
+      "vaccinationLists": "Paratoi ar gyfer yr ymweliad â'r fferm",
+      "vaccinationListsHint": "Cyn mynd i'r fferm, crëwch restr frechu gyfredol a'r ffurflen adrodd gyfatebol.",
+      "vaccinationListPurpose": "Crëwch restr frechu i gadarnhau nifer y gwartheg i'w brechu.",
       "createVaccinationList": "Creu rhestr frechu",
       "creatingVaccinationList": "Wrthi'n creu eich rhestr frechu…",
-      "listDate": "Dyddiad y rhestr",
-      "downloadLink": "Dolen lawrlwytho",
-      "workListLink": "Rhestr frechu bTB {{name}} {{date}} (yn agor mewn tab newydd)"
+      "vaccinationListHeading": "Rhestr frechu: {{date}}",
+      "downloadVaccinationList": "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)",
+      "listReady": "Yn barod"
     },
     "workList": {
       "title": "{{name}} - rhestr frechu bTB",
