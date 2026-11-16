@@ -57,9 +57,7 @@
       "print": "Argraffu'r rhestr hon",
       "cph": "CPH",
       "cattleOnList": "Gwartheg ar y rhestr hon",
-      "dateListMade": "Dyddiad creu'r rhestr",
       "vaccinationDate": "Dyddiad brechu",
-      "batch": "Swp",
       "vaccineBatchNumber": "Rhif swp y brechlyn",
       "vaccineExpiryDate": "Dyddiad dod i ben y brechlyn",
       "diluentBatchNumber": "Rhif swp yr hydoddyn",
@@ -71,10 +69,10 @@
       "maleAbbreviation": "G",
       "femaleAbbreviation": "B",
       "pageNumber": "Tudalen {{page}} o {{total}}",
-      "blankPage": "Tudalen wag",
-      "blankPageTitle": "{{name}} - Tudalen wag",
-      "blankPageDescription": "Gadawyd y dudalen hon yn wag i gofnodi gwartheg annisgwyl.",
-      "remarks": "Sylwadau"
+      "listCreatedOn": "Rhestr wedi'i chreu ar",
+      "tick": "Ticio",
+      "notes": "Nodiadau",
+      "blankPageFooter": "{{name}} - Tudalen wag ar gyfer gwartheg annisgwyl"
     },
     "cookies": {
       "title": "Cwcis"
