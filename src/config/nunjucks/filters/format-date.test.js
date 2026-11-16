@@ -37,4 +37,10 @@ describe('#formatDate', () => {
       ).toBe('11:40 am on Wednesday 1st February 2023')
     })
   })
+
+  test('Formats dates in Welsh when requested', () => {
+    expect(formatDate('2026-10-08', 'EEEE d MMMM yyyy', 'cy')).toBe(
+      'dydd Iau 8 Hydref 2026'
+    )
+  })
 })

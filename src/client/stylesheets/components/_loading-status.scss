@@ -1,0 +1,33 @@
+@use "govuk-frontend" as *;
+
+.app-loading-status:not(:empty)::before {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: govuk-spacing(2);
+  vertical-align: middle;
+  content: "";
+  border: 3px solid govuk-colour("black", $variant: "tint-80");
+  border-top-color: govuk-colour("blue");
+  border-radius: 50%;
+  animation: app-loading-status-spin 1s linear infinite;
+}
+
+@keyframes app-loading-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loading-status:not(:empty)::before {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .app-loading-status:not(:empty)::before {
+    border-color: CanvasText;
+    border-top-color: transparent;
+  }
+}
