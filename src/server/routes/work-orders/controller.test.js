@@ -385,6 +385,10 @@ describe('#workOrderController', () => {
 describe('#workListController', () => {
   let server
 
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   beforeAll(async () => {
     server = await createServer()
     await server.initialize()
@@ -485,6 +489,78 @@ describe('#workListController', () => {
 
     expect(statusCode).toBe(statusCodes.ok)
     expect(load(result)('tbody .app-work-list__sex').first().text()).toBe('')
+  })
+
+  test('Should show recent cattle BCG vaccination dates in the notes column', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-11-12T12:00:00Z'))
+    backendRequest.mockResolvedValue({
+      cphName: 'Hill Farm',
+      cphCode: '40/715/9200',
+      cattle: [
+        {
+          earTag: 'UK977985345673',
+          lastVaccination: { cattleBCG: '2026-03-13' }
+        },
+        {
+          earTag: 'UK977985345674',
+          lastVaccination: { cattleBCG: '2026-03-12' }
+        },
+        {
+          earTag: 'UK977985345675',
+          lastVaccination: { cattleBCG: '2025-11-12' }
+        },
+        {
+          earTag: 'UK977985345676',
+          lastVaccination: { cattleBCG: '2025-11-11' }
+        },
+        {
+          earTag: 'UK977985345677',
+          lastVaccination: { cattleBCG: '2026-11-13' }
+        },
+        { earTag: 'UK977985345678' }
+      ]
+    })
+
+    const { result, statusCode } = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
+    })
+    expect(statusCode).toBe(statusCodes.ok)
+    expect(
+      load(result)('.app-work-list__record-table tbody .app-work-list__notes')
+        .map((_, cell) => load(cell).text())
+        .get()
+        .slice(0, 6)
+    ).toEqual([
+      'Not eligible: earliest vaccination date 13/11/2026',
+      'Last vaccination date 12/03/2026',
+      'Last vaccination date 12/11/2025',
+      '',
+      '',
+      ''
+    ])
+
+    const welshResponse = await server.inject({
+      method: 'GET',
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002?lang=cy'
+    })
+
+    expect(welshResponse.statusCode).toBe(statusCodes.ok)
+    expect(
+      load(welshResponse.result)(
+        '.app-work-list__record-table tbody .app-work-list__notes'
+      )
+        .first()
+        .text()
+    ).toBe('Ddim yn gymwys: dyddiad brechu cynharaf 13/11/2026')
+    expect(
+      load(welshResponse.result)(
+        '.app-work-list__record-table tbody .app-work-list__notes'
+      )
+        .eq(1)
+        .text()
+    ).toBe('Dyddiad y brechiad diwethaf 12/03/2026')
   })
 
   test('Should translate printable work list content into Welsh', async () => {

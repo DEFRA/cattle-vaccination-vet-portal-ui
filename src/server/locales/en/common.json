@@ -49,6 +49,8 @@
       "dob": "DOB",
       "sex": "Sex",
       "breed": "Breed",
+      "notEligible": "Not eligible: earliest vaccination date {{date}}",
+      "lastVaccinationDate": "Last vaccination date {{date}}",
       "cattleCount": "{{count}} cattle",
       "pageCount": "{{count}} pages",
       "pageCount_one": "{{count}} page",
