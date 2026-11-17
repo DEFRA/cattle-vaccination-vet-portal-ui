@@ -57,9 +57,7 @@
       "print": "Print this list",
       "cph": "CPH",
       "cattleOnList": "Cattle on this list",
-      "dateListMade": "Date list was made",
       "vaccinationDate": "Vaccination date",
-      "batch": "Batch",
       "vaccineBatchNumber": "Vaccine batch number",
       "vaccineExpiryDate": "Vaccine expiry date",
       "diluentBatchNumber": "Diluent batch number",
@@ -71,10 +69,10 @@
       "maleAbbreviation": "M",
       "femaleAbbreviation": "F",
       "pageNumber": "Page {{page}} of {{total}}",
-      "blankPage": "Blank page",
-      "blankPageTitle": "{{name}} - Blank page",
-      "blankPageDescription": "This page left blank to capture unexpected cattle.",
-      "remarks": "Remarks"
+      "listCreatedOn": "List created on",
+      "tick": "Tick",
+      "notes": "Notes",
+      "blankPageFooter": "{{name}} - Blank page for unexpected cattle"
     },
     "cookies": {
       "title": "Cookies"

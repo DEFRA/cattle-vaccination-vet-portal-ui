@@ -17,48 +17,31 @@
     {% set pageNumber = loop.index %}
     <div class="app-work-list__sheet{% if pageNumber > 1 %} app-work-list__sheet--continued{% endif %}">
 
-      <div class="app-work-list__sheet-header">
-        {% if pageNumber == 1 %}
-          <h1 class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ t("pages.workList.heading", { name: farmName, interpolation: { escapeValue: false } }) }}</h1>
-        {% else %}
-          <span class="app-work-list__sheet-cph">{{ farmName }} - {{ t("pages.workList.cph") }}: {{ cphCode }}</span>
-        {% endif %}
-        <span class="app-work-list__range">{{ sheet.range }}</span>
-      </div>
-
+      {# Pages 2 onwards have no header: the farm and CPH are in the footer. #}
       {% if pageNumber == 1 %}
-        <div class="govuk-grid-row app-work-list__meta">
-          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.cph") }}:</strong><br>{{ cphCode }}</div>
-          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.cattleOnList") }}:</strong><br>{{ cattleCount }}</div>
-          <div class="govuk-grid-column-one-third"><strong>{{ t("pages.workList.dateListMade") }}:</strong><br>{% if createdDate %}{{ createdDate | formatDate("EEEE d MMMM yyyy", htmlLang) }}{% endif %}</div>
+        <div class="app-work-list__sheet-header">
+          <h1 class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ t("pages.workList.heading", { name: farmAndCph, interpolation: { escapeValue: false } }) }}</h1>
         </div>
 
-        <table class="app-work-list__entry-table app-work-list__entry-table--date">
-          <tbody>
-            <tr>
-              <th scope="row">{{ t("pages.workList.vaccinationDate") }}:</th>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-
+        {# One table, so the top line shares the batch table's columns. #}
         <table class="app-work-list__entry-table">
           <thead>
+            <tr class="app-work-list__meta-row">
+              <td colspan="2"><div class="app-work-list__write"><strong>{{ t("pages.workList.vaccinationDate") }}:</strong><span class="app-work-list__write-line"></span></div></td>
+              <td class="app-work-list__meta-item"><strong>{{ t("pages.workList.cattleOnList") }}:</strong> {{ cattleCount }}</td>
+              <td class="app-work-list__meta-item"><strong>{{ t("pages.workList.listCreatedOn") }}:</strong> {% if createdDate %}{{ createdDate | formatDate("dd MMM yyyy", htmlLang) }}{% endif %}</td>
+            </tr>
             <tr>
-              <th scope="col" class="app-work-list__batch">{{ t("pages.workList.batch") }}</th>
-              <th scope="col">{{ t("pages.workList.vaccineBatchNumber") }}:</th>
-              <th scope="col">{{ t("pages.workList.vaccineExpiryDate") }}:</th>
-              <th scope="col">{{ t("pages.workList.diluentBatchNumber") }}:</th>
-              <th scope="col">{{ t("pages.workList.diluentExpiryDate") }}:</th>
+              <th scope="col">{{ t("pages.workList.vaccineBatchNumber") }}</th>
+              <th scope="col">{{ t("pages.workList.vaccineExpiryDate") }}</th>
+              <th scope="col">{{ t("pages.workList.diluentBatchNumber") }}</th>
+              <th scope="col">{{ t("pages.workList.diluentExpiryDate") }}</th>
             </tr>
           </thead>
           <tbody>
-            {% for batch in [1, 2] %}
-              <tr>
-                <th scope="row" class="app-work-list__batch">{{ batch }}</th>
-                <td></td><td></td><td></td><td></td>
-              </tr>
-            {% endfor %}
+            <tr>
+              <td></td><td></td><td></td><td></td>
+            </tr>
           </tbody>
         </table>
       {% endif %}
@@ -67,6 +50,7 @@
         <thead>
           <tr>
             <th scope="col" class="app-work-list__number">{{ t("pages.workList.number") }}</th>
+            <th scope="col" class="app-work-list__tick"><span class="govuk-visually-hidden">{{ t("pages.workList.tick") }}</span></th>
             <th scope="col" class="app-work-list__ear-tag">{{ t("pages.workList.earTagNumber") }}</th>
             <th scope="col" class="app-work-list__dob">{{ t("pages.workList.dob") }}</th>
             <th scope="col" class="app-work-list__sex">{{ t("pages.workList.sex") }}</th>
@@ -78,6 +62,7 @@
           <tbody{% if row.number % 5 == 0 %} class="app-work-list__fifth-row"{% endif %}>
             <tr>
               <td class="app-work-list__number">{{ row.number }}</td>
+              <td class="app-work-list__tick"><span class="app-work-list__tick-box"></span></td>
               <td class="app-work-list__ear-tag">
                 <span class="app-work-list__ear-tag-value">
                   {{ row.earTagParts.prefix }}<span class="app-work-list__last-four{% if row.hasDuplicateLastFour %} app-work-list__last-four--duplicate{% endif %}"
@@ -95,39 +80,50 @@
 
       <div class="app-work-list__sheet-footer">
         <span class="app-work-list__range app-work-list__range--left">{{ sheet.range }}</span>
-        <span class="app-work-list__page-number">{{ t("pages.workList.pageNumber", { page: pageNumber, total: totalPages }) }}</span>
+        <span class="app-work-list__page-number">
+          {# Page 1 already shows the farm and CPH at the top. #}
+          {% if pageNumber > 1 %}<span class="app-work-list__footer-farm">{{ farmAndCph }}</span>{% endif %}
+          {{ t("pages.workList.pageNumber", { page: pageNumber, total: totalPages }) }}
+        </span>
         <span class="app-work-list__range">{{ sheet.range }}</span>
       </div>
     </div>
   {% endfor %}
 
-  <div class="app-work-list__sheet app-work-list__sheet--continued">
-    <div class="app-work-list__sheet-header app-work-list__blank-header">
-      <span class="app-work-list__sheet-cph">{{ farmName }} - {{ t("pages.workList.cph") }}: {{ cphCode }}</span>
-      <span class="govuk-heading-m govuk-!-margin-bottom-0 app-work-list__sheet-title">{{ t("pages.workList.blankPageTitle", { name: farmName, interpolation: { escapeValue: false } }) }}</span>
-      <span class="app-work-list__range">{{ t("pages.workList.blankPage") }}</span>
-    </div>
-    <p>{{ t("pages.workList.blankPageDescription") }}</p>
+  {# Last sheet: blank rows for cattle that turn up but aren't on the list.
+     Same layout as page 2 onwards, with a heavy line after every 5th row. #}
+  <div class="app-work-list__sheet app-work-list__sheet--continued app-work-list__sheet--blank">
     <table class="app-work-list__record-table">
       <thead>
         <tr>
+          <th scope="col" class="app-work-list__tick"><span class="govuk-visually-hidden">{{ t("pages.workList.tick") }}</span></th>
           <th scope="col" class="app-work-list__ear-tag">{{ t("pages.workList.earTagNumber") }}</th>
           <th scope="col" class="app-work-list__dob">{{ t("pages.workList.dob") }}</th>
           <th scope="col" class="app-work-list__sex">{{ t("pages.workList.sex") }}</th>
           <th scope="col" class="app-work-list__breed">{{ t("pages.workList.breed") }}</th>
-          <th scope="col" class="app-work-list__notes">{{ t("pages.workList.remarks") }}</th>
+          <th scope="col" class="app-work-list__notes">{{ t("pages.workList.notes") }}</th>
         </tr>
       </thead>
-      <tbody>
-        {% for _row in range(0, 22) %}
-          <tr><td></td><td></td><td></td><td></td><td></td></tr>
-        {% endfor %}
-      </tbody>
+      {% for rowNumber in range(1, blankPageRowCount + 1) %}
+        <tbody{% if rowNumber % 5 == 0 %} class="app-work-list__fifth-row"{% endif %}>
+          <tr>
+            <td class="app-work-list__tick"><span class="app-work-list__tick-box"></span></td>
+            <td class="app-work-list__ear-tag"></td>
+            <td class="app-work-list__dob"></td>
+            <td class="app-work-list__sex"></td>
+            <td class="app-work-list__breed"></td>
+            <td class="app-work-list__notes"></td>
+          </tr>
+        </tbody>
+      {% endfor %}
     </table>
     <div class="app-work-list__sheet-footer">
-      <span class="app-work-list__range app-work-list__range--left">{{ t("pages.workList.blankPage") }}</span>
-      <span class="app-work-list__page-number">{{ t("pages.workList.pageNumber", { page: totalPages, total: totalPages }) }}</span>
-      <span class="app-work-list__range">{{ t("pages.workList.blankPage") }}</span>
+      <span></span>
+      <span class="app-work-list__page-number">
+        <span class="app-work-list__footer-farm">{{ t("pages.workList.blankPageFooter", { name: farmAndCph, interpolation: { escapeValue: false } }) }}</span>
+        {{ t("pages.workList.pageNumber", { page: totalPages, total: totalPages }) }}
+      </span>
+      <span></span>
     </div>
   </div>
 

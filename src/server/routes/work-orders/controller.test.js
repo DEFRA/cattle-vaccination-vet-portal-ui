@@ -434,29 +434,37 @@ describe('#workListController', () => {
 
     expect($page('title').text()).toContain('Hill Farm - bTB vaccination list')
     expect($page('.app-work-list__sheet-title').first().text()).toBe(
-      'Hill Farm - bTB vaccination list'
+      'Hill Farm - CPH: 40/715/9200 - bTB vaccination list'
     )
     expect($page('.app-work-list__toolbar').text()).toContain(
       'Hill Farm · 1 cattle · 2 pages'
     )
     expect($page('[data-print-page]').text()).toBe('Print this list')
-    expect($page('.app-work-list__meta').text()).toContain('CPH:40/715/9200')
-    expect($page('.app-work-list__meta').text()).toContain(
-      'Date list was made:Thursday 8 October 2026'
+    expect($page('.app-work-list__meta-row').text()).toContain(
+      'Cattle on this list: 1'
+    )
+    expect($page('.app-work-list__meta-row').text()).toContain(
+      'List created on: 08 Oct 2026'
     )
     expect($page('.app-work-list__range').first().text()).toBe('5673–5673')
     expect($page('.app-work-list__last-four').text()).toBe('5673')
-    expect($page('.app-work-list__sheet').last().text()).toContain(
-      'This page left blank to capture unexpected cattle.'
+    const blankPage = $page('.app-work-list__sheet').last()
+    expect(blankPage.find('.app-work-list__footer-farm').text()).toBe(
+      'Hill Farm - CPH: 40/715/9200 - Blank page for unexpected cattle'
     )
+    expect(blankPage.find('.app-work-list__tick-box')).toHaveLength(35)
+    expect(blankPage.find('.app-work-list__fifth-row')).toHaveLength(7)
+    expect(blankPage.find('.app-work-list__range')).toHaveLength(0)
     expect(cells).toEqual([
       'No.',
+      'Tick',
       'Ear tag number',
       'DOB',
       'Sex',
       'Breed',
       'Notes/vaccine batch',
       '1',
+      '',
       'UK 977985 345673',
       '04/11/2020',
       'M',
@@ -589,24 +597,20 @@ describe('#workListController', () => {
     )
     expect($page('[data-print-page]').text()).toBe("Argraffu'r rhestr hon")
     expect($page('.app-work-list__sheet-title').first().text()).toBe(
-      'Hill & Farm - rhestr frechu bTB'
+      'Hill & Farm - CPH: 40/715/9200 - rhestr frechu bTB'
     )
-    expect($page('.app-work-list__meta').text()).toContain(
-      "Dyddiad creu'r rhestr:dydd Iau 8 Hydref 2026"
+    expect($page('.app-work-list__meta-row').text()).toContain(
+      "Rhestr wedi'i chreu ar: 08 Hyd 2026"
     )
     expect(
       $page('.app-work-list__entry-table th')
         .map((_, cell) => $page(cell).text().trim())
         .get()
     ).toEqual([
-      'Dyddiad brechu:',
-      'Swp',
-      'Rhif swp y brechlyn:',
-      'Dyddiad dod i ben y brechlyn:',
-      'Rhif swp yr hydoddyn:',
-      'Dyddiad dod i ben yr hydoddyn:',
-      '1',
-      '2'
+      'Rhif swp y brechlyn',
+      'Dyddiad dod i ben y brechlyn',
+      'Rhif swp yr hydoddyn',
+      'Dyddiad dod i ben yr hydoddyn'
     ])
     expect(
       $page('.app-work-list__record-table')
@@ -616,6 +620,7 @@ describe('#workListController', () => {
         .get()
     ).toEqual([
       'Rhif',
+      'Ticio',
       'Rhif tag clust',
       'Dyddiad geni',
       'Rhyw',
@@ -623,7 +628,9 @@ describe('#workListController', () => {
       'Nodiadau/swp y brechlyn'
     ])
     expect(
-      $page('.app-work-list__record-table tbody .app-work-list__sex')
+      $page('.app-work-list__sheet')
+        .first()
+        .find('.app-work-list__record-table tbody .app-work-list__sex')
         .map((_, cell) => $page(cell).text())
         .get()
     ).toEqual(['G', 'B', 'U'])
@@ -633,17 +640,11 @@ describe('#workListController', () => {
       'Mae gan anifail arall ar y fferm hon yr un 4 digid olaf ar ei dag clust'
     )
     const blankPage = $page('.app-work-list__sheet').last()
-    expect(blankPage.find('.app-work-list__sheet-title').text()).toBe(
-      'Hill & Farm - Tudalen wag'
+    expect(blankPage.find('.app-work-list__footer-farm').text()).toBe(
+      'Hill & Farm - CPH: 40/715/9200 - Tudalen wag ar gyfer gwartheg annisgwyl'
     )
-    expect(blankPage.text()).toContain(
-      'Gadawyd y dudalen hon yn wag i gofnodi gwartheg annisgwyl.'
-    )
-    expect(blankPage.find('thead th').last().text()).toBe('Sylwadau')
-    expect(blankPage.find('.app-work-list__range').first().text()).toBe(
-      'Tudalen wag'
-    )
-    expect(blankPage.find('.app-work-list__page-number').text()).toBe(
+    expect(blankPage.find('thead th').last().text()).toBe('Nodiadau')
+    expect(blankPage.find('.app-work-list__page-number').text()).toContain(
       'Tudalen 2 o 2'
     )
   })
@@ -682,14 +683,14 @@ describe('#workListController', () => {
     expect($page('.app-work-list__sheet-title').first().text()).toBe(
       '<img src=x> - rhestr frechu bTB'
     )
-    expect($page('.app-work-list__sheet-title').last().text()).toBe(
-      '<img src=x> - Tudalen wag'
+    expect($page('.app-work-list__footer-farm').last().text()).toBe(
+      '<img src=x> - Tudalen wag ar gyfer gwartheg annisgwyl'
     )
     expect($page('img')).toHaveLength(0)
   })
 
   test('Should paginate the printable list like the prototype', async () => {
-    const cattle = Array.from({ length: 46 }, (_, index) => ({
+    const cattle = Array.from({ length: 66 }, (_, index) => ({
       earTag:
         index === 1
           ? 'UK999999990001'
@@ -728,16 +729,21 @@ describe('#workListController', () => {
       .slice(0, 3)
       .map((_, sheet) =>
         $page(sheet)
-          .find('.app-work-list__sheet-header .app-work-list__range')
+          .find('.app-work-list__sheet-footer .app-work-list__range--left')
           .text()
       )
       .get()
 
     expect(sheets).toHaveLength(4)
-    expect(recordCounts).toEqual([20, 25, 1])
-    expect(ranges).toEqual(['0001–0020', '0021–0045', '0046–0046'])
+    expect(recordCounts).toEqual([30, 35, 1])
+    expect(ranges).toEqual(['0001–0030', '0031–0065', '0066–0066'])
+    expect($page('.app-work-list__sheet-header')).toHaveLength(1)
+    expect(sheets.eq(0).find('.app-work-list__footer-farm')).toHaveLength(0)
+    expect(sheets.eq(1).find('.app-work-list__footer-farm').text()).toBe(
+      'Hill Farm - CPH: 40/715/9200'
+    )
     expect($page('.app-work-list__last-four--duplicate')).toHaveLength(2)
-    expect($page('.app-work-list__page-number').last().text()).toBe(
+    expect($page('.app-work-list__page-number').last().text()).toContain(
       'Page 4 of 4'
     )
 
@@ -748,15 +754,15 @@ describe('#workListController', () => {
     expect(welshResponse.statusCode).toBe(statusCodes.ok)
     const $welshPage = load(welshResponse.result)
     expect($welshPage('.app-work-list__toolbar p').text()).toBe(
-      'Hill Farm · 46 o wartheg · 4 tudalen'
+      'Hill Farm · 66 o wartheg · 4 tudalen'
     )
     expect(
       $welshPage('.app-work-list__sheet')
         .eq(1)
-        .find('.app-work-list__sheet-cph')
+        .find('.app-work-list__footer-farm')
         .text()
     ).toBe('Hill Farm - CPH: 40/715/9200')
-    expect($welshPage('.app-work-list__page-number').eq(1).text()).toBe(
+    expect($welshPage('.app-work-list__page-number').eq(1).text()).toContain(
       'Tudalen 2 o 4'
     )
   })

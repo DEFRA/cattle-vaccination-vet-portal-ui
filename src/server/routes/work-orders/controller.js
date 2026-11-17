@@ -11,8 +11,8 @@ import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { backendRequest } from '#/server/common/helpers/backend-client.js'
 import { formatDate } from '#/config/nunjucks/filters/format-date.js'
 
-const firstWorkListPageSize = 20
-const continuedWorkListPageSize = 25
+const firstWorkListPageSize = 30
+const continuedWorkListPageSize = 35
 const vaccinationEligibilityPeriodMonths = 8
 const vaccinationNoteLookbackMonths = 12
 
@@ -240,6 +240,10 @@ export const workListController = {
     const rows = buildWorkListRows(workList.cattle, request.t)
     const sheets = buildWorkListSheets(rows)
     const farmName = workList.cphName || workList.cphCode || workList.name
+    const farmAndCph =
+      workList.cphCode && workList.cphCode !== farmName
+        ? `${farmName} - ${request.t('pages.workList.cph')}: ${workList.cphCode}`
+        : farmName
 
     return h.view('work-orders/work-list', {
       pageTitle: request.t('pages.workList.title', {
@@ -247,10 +251,11 @@ export const workListController = {
         interpolation: { escapeValue: false }
       }),
       farmName,
-      cphCode: workList.cphCode,
+      farmAndCph,
       createdDate: workList.createdDate,
       cattleCount: rows.length,
       sheets,
+      blankPageRowCount: continuedWorkListPageSize,
       totalPages: sheets.length + 1
     })
   }
