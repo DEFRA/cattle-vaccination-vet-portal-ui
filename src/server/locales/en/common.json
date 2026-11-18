@@ -39,7 +39,10 @@
       "creatingVaccinationList": "Creating your vaccination list…",
       "vaccinationListHeading": "Vaccination list: {{date}}",
       "downloadVaccinationList": "Download vaccination list (opens in a new tab)",
-      "listReady": "Ready"
+      "listReady": "Ready",
+      "reportVaccinationStatus": "Report vaccination status",
+      "cattleToReport": "{{count}} cattle to report",
+      "reportStatusToDo": "To do"
     },
     "workList": {
       "title": "{{name}} - bTB vaccination list",

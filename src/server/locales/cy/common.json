@@ -39,7 +39,10 @@
       "creatingVaccinationList": "Wrthi'n creu eich rhestr frechu…",
       "vaccinationListHeading": "Rhestr frechu: {{date}}",
       "downloadVaccinationList": "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)",
-      "listReady": "Yn barod"
+      "listReady": "Yn barod",
+      "reportVaccinationStatus": "Rhoi gwybod am statws brechu",
+      "cattleToReport": "{{count}} o wartheg i roi gwybod amdanynt",
+      "reportStatusToDo": "I'w wneud"
     },
     "workList": {
       "title": "{{name}} - rhestr frechu bTB",
