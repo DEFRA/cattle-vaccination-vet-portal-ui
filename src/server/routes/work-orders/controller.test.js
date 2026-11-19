@@ -94,7 +94,8 @@ describe('#workOrderController', () => {
         {
           id: 'a0W000000000002',
           name: 'CV WorkList 2',
-          createdDate: '2026-10-08T09:00:00.000+0000'
+          createdDate: '2026-10-08T09:00:00.000+0000',
+          animalCount: 1040
         }
       ]
     })
@@ -137,29 +138,42 @@ describe('#workOrderController', () => {
       'Create a vaccination list to confirm the number of cattle to vaccinate.'
     )
     const form = $page('form[action^="/work-orders/"]')
-    const workListLink = $page('.govuk-task-list__link')
+    const taskLinks = $page('.govuk-task-list__link')
+    const taskStatuses = $page('.govuk-task-list__status')
 
     expect($page('h2[id^="worklist-"]').text()).toBe(
       'Vaccination list: 8 Oct 2026'
     )
-    expect($page('.govuk-task-list__status').text().trim()).toBe('Ready')
+    expect(taskStatuses.eq(0).text().trim()).toBe('Ready')
+    expect(taskStatuses.eq(1).text().trim()).toBe('To do')
     expect(
       $page('.govuk-task-list__status .govuk-tag.govuk-tag--grey')
+    ).toHaveLength(1)
+    expect(
+      $page('.govuk-task-list__status .govuk-tag.govuk-tag--blue')
     ).toHaveLength(1)
     expect($page('.govuk-task-list__status').hasClass('govuk-tag--grey')).toBe(
       false
     )
     expect($page('.govuk-table')).toHaveLength(0)
-    expect(workListLink.text()).toContain(
+    expect(taskLinks.eq(0).text()).toContain(
       'Download vaccination list (opens in a new tab)'
     )
-    expect(workListLink.attr('href')).toBe(
+    expect(taskLinks.eq(0).attr('href')).toBe(
       '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     )
-    expect(workListLink.attr('target')).toBe('_blank')
-    expect(workListLink.attr('rel')).toBe('noopener noreferrer')
-    expect(workListLink.attr('aria-describedby')).toBe(
+    expect(taskLinks.eq(0).attr('target')).toBe('_blank')
+    expect(taskLinks.eq(0).attr('rel')).toBe('noopener noreferrer')
+    expect(taskLinks.eq(0).attr('aria-describedby')).toBe(
       'worklist-a0W000000000002 worklist-a0W000000000002-1-status'
+    )
+    expect(taskLinks.eq(1).text().trim()).toBe('Report vaccination status')
+    expect(taskLinks.eq(1).attr('href')).toBe('#')
+    expect(taskLinks.eq(1).attr('aria-describedby')).toBe(
+      'worklist-a0W000000000002-2-hint worklist-a0W000000000002-2-status'
+    )
+    expect($page('#worklist-a0W000000000002-2-hint').text().trim()).toBe(
+      '1,040 cattle to report'
     )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')
@@ -199,9 +213,24 @@ describe('#workOrderController', () => {
       id: 'CV WorkOrder 2',
       cph: { locationName: 'Hill Farm' },
       workLists: [
-        { id: 'older/list', name: 'Older list', createdDate: '2026-03-08' },
-        { id: 'new list', name: 'New list', createdDate: '2026-10-08' },
-        { id: 'undated', name: '<Undated & list>', createdDate: null }
+        {
+          id: 'older/list',
+          name: 'Older list',
+          createdDate: '2026-03-08',
+          animalCount: 8
+        },
+        {
+          id: 'new list',
+          name: 'New list',
+          createdDate: '2026-10-08',
+          animalCount: 12
+        },
+        {
+          id: 'undated',
+          name: '<Undated & list>',
+          createdDate: null,
+          animalCount: 3
+        }
       ]
     })
 
@@ -229,12 +258,19 @@ describe('#workOrderController', () => {
         .find('.govuk-task-list__status')
         .map((_, s) => $page(s).text().trim())
         .get()
-    ).toEqual(['Yn barod', 'Yn barod', 'Yn barod'])
+    ).toEqual([
+      'Yn barod',
+      "I'w wneud",
+      'Yn barod',
+      "I'w wneud",
+      'Yn barod',
+      "I'w wneud"
+    ])
     const links = lists.find('a')
     expect(links.eq(0).attr('href')).toBe(
       '/work-orders/CV%20WorkOrder%202/work-lists/new%20list'
     )
-    expect(links.eq(1).attr('href')).toBe(
+    expect(links.eq(2).attr('href')).toBe(
       '/work-orders/CV%20WorkOrder%202/work-lists/older%2Flist'
     )
     expect($page('h2[id^="worklist-"]').first().attr('id')).toBe(
@@ -244,12 +280,17 @@ describe('#workOrderController', () => {
       'worklist-older%2Flist'
     )
     expect(links.eq(0).attr('id')).toBeUndefined()
-    expect(links.eq(1).attr('id')).toBeUndefined()
-    expect(links.eq(1).attr('aria-describedby')).toBe(
+    expect(links.eq(2).attr('id')).toBeUndefined()
+    expect(links.eq(2).attr('aria-describedby')).toBe(
       'worklist-older%2Flist worklist-older%2Flist-1-status'
     )
     expect(links.eq(0).text().trim()).toBe(
       "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)"
+    )
+    expect(links.eq(1).text().trim()).toBe('Rhoi gwybod am statws brechu')
+    expect(links.eq(1).attr('href')).toBe('#')
+    expect($page('[id="worklist-new%20list-2-hint"]').text().trim()).toBe(
+      '12 o wartheg i roi gwybod amdanynt'
     )
   })
 
@@ -333,7 +374,12 @@ describe('#workOrderController', () => {
         id: 'CV WorkOrder 2',
         cph: { locationName: 'Hill Farm' },
         workLists: [
-          { id: workListId, name: 'New list', createdDate: '2026-11-13' }
+          {
+            id: workListId,
+            name: 'New list',
+            createdDate: '2026-11-13',
+            animalCount: 10
+          }
         ]
       })
       const updatedPage = await server.inject({
