@@ -41,7 +41,7 @@
       "downloadVaccinationList": "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)",
       "listReady": "Yn barod",
       "reportVaccinationStatus": "Rhoi gwybod am statws brechu",
-      "cattleToReport": "{{count}} o wartheg i roi gwybod amdanynt",
+      "cattleToReport": "{{count, number}} o wartheg i roi gwybod amdanynt",
       "reportStatusToDo": "I'w wneud"
     },
     "workList": {

@@ -95,7 +95,7 @@ describe('#workOrderController', () => {
           id: 'a0W000000000002',
           name: 'CV WorkList 2',
           createdDate: '2026-10-08T09:00:00.000+0000',
-          animalCount: 104
+          animalCount: 1040
         }
       ]
     })
@@ -173,7 +173,7 @@ describe('#workOrderController', () => {
       'worklist-a0W000000000002-2-hint worklist-a0W000000000002-2-status'
     )
     expect($page('#worklist-a0W000000000002-2-hint').text().trim()).toBe(
-      '104 cattle to report'
+      '1,040 cattle to report'
     )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')

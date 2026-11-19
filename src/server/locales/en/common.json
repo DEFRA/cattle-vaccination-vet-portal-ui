@@ -41,7 +41,7 @@
       "downloadVaccinationList": "Download vaccination list (opens in a new tab)",
       "listReady": "Ready",
       "reportVaccinationStatus": "Report vaccination status",
-      "cattleToReport": "{{count}} cattle to report",
+      "cattleToReport": "{{count, number}} cattle to report",
       "reportStatusToDo": "To do"
     },
     "workList": {
