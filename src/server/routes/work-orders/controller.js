@@ -10,11 +10,6 @@ import {
 import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { backendRequest } from '#/server/common/helpers/backend-client.js'
 import { formatDate } from '#/config/nunjucks/filters/format-date.js'
-import {
-  canonicalWorkOrderSlug,
-  workOrderIdToSlug,
-  workOrderSlugToId
-} from '#/server/common/helpers/work-order-id.js'
 
 const firstWorkListPageSize = 30
 const continuedWorkListPageSize = 35
@@ -135,7 +130,7 @@ export const workOrdersController = {
       heading: request.t('pages.workOrders.heading'),
       workOrders: workOrders.map((workOrder) => ({
         ...workOrder,
-        slug: workOrderIdToSlug(workOrder.id)
+        slug: workOrder.id.replaceAll(' ', '-')
       })),
       breadcrumbs: [
         {
@@ -160,35 +155,17 @@ function workOrderNotFound(h) {
     .code(statusCodes.notFound)
 }
 
-function canonicalWorkOrderRedirect(request, h, pathSuffix = '') {
-  const workOrderSlug = canonicalWorkOrderSlug(request.params.workOrderSlug)
-
-  if (workOrderSlug === request.params.workOrderSlug) {
-    return null
-  }
-
-  return h.redirect(
-    `/work-orders/${encodeURIComponent(workOrderSlug)}${pathSuffix}${request.url.search}`
-  )
-}
-
 /**
  * Work order task list page controller.
  */
 export const workOrderController = {
   async handler(request, h) {
-    const canonicalRedirect = canonicalWorkOrderRedirect(request, h)
-
-    if (canonicalRedirect) {
-      return canonicalRedirect
-    }
-
-    const workOrderId = workOrderSlugToId(request.params.workOrderSlug)
+    const { workOrderSlug } = request.params
     let workOrder
 
     try {
       workOrder = await backendRequest(
-        `/workorders/${encodeURIComponent(workOrderId)}`
+        `/workorders/${encodeURIComponent(workOrderSlug)}`
       )
     } catch (error) {
       if (error.statusCode !== statusCodes.notFound) {
@@ -205,7 +182,7 @@ export const workOrderController = {
       pageTitle: request.t('pages.workOrder.title', { name }),
       name,
       issueDate: cph?.startDate,
-      workOrderSlug: request.params.workOrderSlug,
+      workOrderSlug,
       cphCode: cph?.cphCode,
       address: cph?.address,
       workLists: (workOrder.workLists || []).toSorted(newestWorkListFirst)
@@ -218,13 +195,12 @@ export const workOrderController = {
  */
 export const createWorkListController = {
   async handler(request, h) {
-    const workOrderSlug = canonicalWorkOrderSlug(request.params.workOrderSlug)
-    const workOrderId = workOrderSlugToId(workOrderSlug)
+    const { workOrderSlug } = request.params
     let workList
 
     try {
       workList = await backendRequest(
-        `/workorders/${encodeURIComponent(workOrderId)}/work-lists`,
+        `/workorders/${encodeURIComponent(workOrderSlug)}/work-lists`,
         { method: 'POST' }
       )
     } catch (error) {
@@ -251,22 +227,11 @@ export const createWorkListController = {
 export const workListController = {
   async handler(request, h) {
     const { workOrderSlug, workListId } = request.params
-    const canonicalRedirect = canonicalWorkOrderRedirect(
-      request,
-      h,
-      `/work-lists/${encodeURIComponent(workListId)}`
-    )
-
-    if (canonicalRedirect) {
-      return canonicalRedirect
-    }
-
-    const workOrderId = workOrderSlugToId(workOrderSlug)
     let workList
 
     try {
       workList = await backendRequest(
-        `/workorders/${encodeURIComponent(workOrderId)}/work-lists/${encodeURIComponent(workListId)}`
+        `/workorders/${encodeURIComponent(workOrderSlug)}/work-lists/${encodeURIComponent(workListId)}`
       )
     } catch (error) {
       if (error.statusCode !== statusCodes.notFound) {

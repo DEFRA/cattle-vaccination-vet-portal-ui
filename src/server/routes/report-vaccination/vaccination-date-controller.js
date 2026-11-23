@@ -1,9 +1,5 @@
 import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { backendRequest } from '#/server/common/helpers/backend-client.js'
-import {
-  canonicalWorkOrderSlug,
-  workOrderSlugToId
-} from '#/server/common/helpers/work-order-id.js'
 
 const sessionKey = 'vaccinationReportDrafts'
 const dateFields = ['day', 'month', 'year']
@@ -180,8 +176,8 @@ function workOrderNotFound(request, h) {
     .code(statusCodes.notFound)
 }
 
-async function getWorkOrder(workOrderId) {
-  return backendRequest(`/workorders/${encodeURIComponent(workOrderId)}`)
+async function getWorkOrder(workOrderSlug) {
+  return backendRequest(`/workorders/${encodeURIComponent(workOrderSlug)}`)
 }
 
 function getFarmName(workOrder) {
@@ -226,7 +222,7 @@ function buildViewModel(request, workOrder, values, validation) {
       ? `${request.t('pages.vaccinationDate.errorPageTitlePrefix')}: ${title}`
       : title,
     farmName,
-    workOrderSlug: canonicalWorkOrderSlug(request.params.workOrderSlug),
+    workOrderSlug: request.params.workOrderSlug,
     workListId: request.params.workListId,
     dateInputItems: buildDateInputItems(
       request,
@@ -241,11 +237,11 @@ function buildViewModel(request, workOrder, values, validation) {
 }
 
 async function renderVaccinationDate(request, h, values, validation) {
-  const workOrderId = workOrderSlugToId(request.params.workOrderSlug)
+  const { workOrderSlug } = request.params
   let workOrder
 
   try {
-    workOrder = await getWorkOrder(workOrderId)
+    workOrder = await getWorkOrder(workOrderSlug)
   } catch (error) {
     if (error.statusCode !== statusCodes.notFound) {
       throw error
@@ -264,18 +260,9 @@ async function renderVaccinationDate(request, h, values, validation) {
 
 export const vaccinationDateController = {
   async handler(request, h) {
-    const workOrderSlug = canonicalWorkOrderSlug(request.params.workOrderSlug)
-
-    if (workOrderSlug !== request.params.workOrderSlug) {
-      return h.redirect(
-        `/work-orders/${encodeURIComponent(workOrderSlug)}/work-lists/${encodeURIComponent(request.params.workListId)}/report-vaccination/date${request.url.search}`
-      )
-    }
-
+    const { workOrderSlug, workListId } = request.params
     const drafts = request.yar.get(sessionKey) ?? {}
-    const workOrderId = workOrderSlugToId(request.params.workOrderSlug)
-    const storedDate =
-      drafts[workOrderId]?.[request.params.workListId]?.vaccinationDate
+    const storedDate = drafts[workOrderSlug]?.[workListId]?.vaccinationDate
 
     return renderVaccinationDate(request, h, valuesFromStoredDate(storedDate))
   }
@@ -290,14 +277,12 @@ export const saveVaccinationDateController = {
       return renderVaccinationDate(request, h, values, validation)
     }
 
-    const workOrderSlug = request.params.workOrderSlug
-    const workOrderId = workOrderSlugToId(workOrderSlug)
-    const workListId = request.params.workListId
+    const { workOrderSlug, workListId } = request.params
     const drafts = request.yar.get(sessionKey) ?? {}
     request.yar.set(sessionKey, {
       ...drafts,
-      [workOrderId]: {
-        ...drafts[workOrderId],
+      [workOrderSlug]: {
+        ...drafts[workOrderSlug],
         [workListId]: { vaccinationDate: validation.value }
       }
     })

@@ -10,9 +10,9 @@ vi.mock('#/server/common/helpers/backend-client.js', () => ({
 }))
 
 const pageUrl =
-  '/work-orders/CV_WorkOrder_2/work-lists/a0W000000000002/report-vaccination/date'
+  '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002/report-vaccination/date'
 const otherWorkListPageUrl =
-  '/work-orders/CV_WorkOrder_2/work-lists/a0W000000000003/report-vaccination/date'
+  '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000003/report-vaccination/date'
 const workOrder = {
   id: 'CV WorkOrder 2',
   cph: {
@@ -136,9 +136,7 @@ describe('#vaccinationDateController', () => {
     const response = await server.inject({ method: 'GET', url: pageUrl })
 
     expect(response.statusCode).toBe(statusCodes.ok)
-    expect(backendRequest).toHaveBeenCalledWith(
-      '/workorders/CV%20WorkOrder%202'
-    )
+    expect(backendRequest).toHaveBeenCalledWith('/workorders/CV-WorkOrder-2')
 
     const $page = load(response.result)
     const form = $page('form[action$="/report-vaccination/date"]')
@@ -154,7 +152,7 @@ describe('#vaccinationDateController', () => {
       'For example, 20 4 2028'
     )
     expect($page('.govuk-back-link').attr('href')).toBe(
-      '/work-orders/CV_WorkOrder_2'
+      '/work-orders/CV-WorkOrder-2'
     )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe(pageUrl)
@@ -191,17 +189,6 @@ describe('#vaccinationDateController', () => {
     ).toContain('Parhau a chadw')
   })
 
-  test('redirects a report URL containing spaces to its canonical URL', async () => {
-    const response = await server.inject({
-      method: 'GET',
-      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002/report-vaccination/date'
-    })
-
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(pageUrl)
-    expect(backendRequest).not.toHaveBeenCalled()
-  })
-
   test('stores a valid date in the session and returns to the task list', async () => {
     const page = await server.inject({ method: 'GET', url: pageUrl })
     const saved = await submitDate(server, page, {
@@ -211,7 +198,7 @@ describe('#vaccinationDateController', () => {
     })
 
     expect(saved.statusCode).toBe(303)
-    expect(saved.headers.location).toBe('/work-orders/CV_WorkOrder_2')
+    expect(saved.headers.location).toBe('/work-orders/CV-WorkOrder-2')
 
     const revisited = await server.inject({
       method: 'GET',
