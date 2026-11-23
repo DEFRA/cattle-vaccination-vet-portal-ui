@@ -74,7 +74,7 @@
               },
               hint: {
                 text: t("pages.workOrder.cattleToReport", { count: workList.animalCount })
-              },
+              } if workList.animalCount is number,
               status: {
                 tag: {
                   text: t("pages.workOrder.reportStatusToDo"),

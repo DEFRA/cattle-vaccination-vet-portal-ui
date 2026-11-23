@@ -223,6 +223,34 @@ describe('#workOrderController', () => {
     expect(result).not.toContain('Full CPH information')
   })
 
+  test.each([
+    ['missing', {}, undefined],
+    ['null', { animalCount: null }, undefined],
+    ['zero', { animalCount: 0 }, '0 cattle to report']
+  ])(
+    'Should handle a %s animal count',
+    async (_case, countField, expectedHint) => {
+      backendRequest.mockResolvedValue({
+        id: 'CV WorkOrder 2',
+        cph: { locationName: 'Hill Farm' },
+        workLists: [{ id: 'list-1', name: 'Vaccination list 1', ...countField }]
+      })
+
+      const { result, statusCode } = await server.inject({
+        method: 'GET',
+        url: '/work-orders/CV_WorkOrder_2'
+      })
+
+      expect(statusCode).toBe(statusCodes.ok)
+      const $page = load(result)
+      const hint = $page('#worklist-list-1-2-hint')
+      expect(hint.length ? hint.text().trim() : undefined).toBe(expectedHint)
+      expect($page('.govuk-task-list__link').eq(1).text().trim()).toBe(
+        'Report vaccination status'
+      )
+    }
+  )
+
   test('Should show each vaccination list in newest-first order with unique task descriptions', async () => {
     backendRequest.mockResolvedValue({
       id: 'CV WorkOrder 2',
