@@ -30,7 +30,7 @@
       <h2 class="govuk-heading-m" id="vaccination-lists">{{ t("pages.workOrder.vaccinationLists") }}</h2>
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListsHint") }}</p>
       <p class="govuk-body">{{ t("pages.workOrder.vaccinationListPurpose") }}</p>
-      <form method="post" action="/work-orders/{{ workOrderId | urlencode }}" data-create-work-list-form data-submitting-message="{{ t('pages.workOrder.creatingVaccinationList') }}">
+      <form method="post" action="/work-orders/{{ workOrderSlug | urlencode }}" data-create-work-list-form data-submitting-message="{{ t('pages.workOrder.creatingVaccinationList') }}">
         <input type="hidden" name="crumb" value="{{ crumb }}">
         {{ govukButton({
           text: t("pages.workOrder.createVaccinationList"),
@@ -50,7 +50,7 @@
         workListDate, interpolation: { escapeValue: false } }) }}</h2>
         {% set taskLink %}
           <a class="govuk-link govuk-task-list__link"
-            href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}"
+            href="/work-orders/{{ workOrderSlug | urlencode }}/work-lists/{{ workList.id | urlencode }}"
             target="_blank" rel="noopener noreferrer"
             aria-describedby="{{ listPrefix }} {{ listPrefix }}-1-status">{{ t("pages.workOrder.downloadVaccinationList") }}</a>
         {% endset %}
@@ -68,7 +68,7 @@
               }
             },
             {
-              href: "#",
+              href: "/work-orders/" + (workOrderSlug | urlencode) + "/work-lists/" + (workList.id | urlencode) + "/report-vaccination/date",
               title: {
                 text: t("pages.workOrder.reportVaccinationStatus")
               },

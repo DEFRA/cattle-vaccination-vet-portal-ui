@@ -44,6 +44,33 @@
       "cattleToReport": "{{count, number}} o wartheg i roi gwybod amdanynt",
       "reportStatusToDo": "I'w wneud"
     },
+    "vaccinationDate": {
+      "title": "Beth oedd dyddiad y brechiad?",
+      "caption": "Adrodd am frechiad bTB ar gyfer {{name}}",
+      "question": "Beth oedd dyddiad y brechiad?",
+      "hint": "Er enghraifft, 20 4 2028",
+      "day": "Diwrnod",
+      "month": "Mis",
+      "year": "Blwyddyn",
+      "continue": "Parhau a chadw",
+      "saveForLater": "Cadw a pharhau yn nes ymlaen",
+      "back": "Yn ôl i restr dasgau {{name}}",
+      "notFound": "Heb ddod o hyd i'r dudalen",
+      "errorTitle": "Mae problem",
+      "errorPageTitlePrefix": "Gwall",
+      "errors": {
+        "empty": "Nodwch ddyddiad y brechiad",
+        "missingDay": "Rhaid i ddyddiad y brechiad gynnwys diwrnod",
+        "missingMonth": "Rhaid i ddyddiad y brechiad gynnwys mis",
+        "missingYear": "Rhaid i ddyddiad y brechiad gynnwys blwyddyn",
+        "missingDayMonth": "Rhaid i ddyddiad y brechiad gynnwys diwrnod a mis",
+        "missingDayYear": "Rhaid i ddyddiad y brechiad gynnwys diwrnod a blwyddyn",
+        "missingMonthYear": "Rhaid i ddyddiad y brechiad gynnwys mis a blwyddyn",
+        "missingDayMonthYear": "Rhaid i ddyddiad y brechiad gynnwys diwrnod, mis a blwyddyn",
+        "invalid": "Rhaid i ddyddiad y brechiad fod yn ddyddiad go iawn",
+        "future": "Rhaid i ddyddiad y brechiad fod heddiw neu yn y gorffennol"
+      }
+    },
     "workList": {
       "title": "{{name}} - rhestr frechu bTB",
       "heading": "{{name}} - rhestr frechu bTB",

@@ -44,6 +44,33 @@
       "cattleToReport": "{{count, number}} cattle to report",
       "reportStatusToDo": "To do"
     },
+    "vaccinationDate": {
+      "title": "What was the date of vaccination?",
+      "caption": "Report bTB vaccination for {{name}}",
+      "question": "What was the date of vaccination?",
+      "hint": "For example, 20 4 2028",
+      "day": "Day",
+      "month": "Month",
+      "year": "Year",
+      "continue": "Continue and save",
+      "saveForLater": "Save and continue later",
+      "back": "Back to {{name}} task list",
+      "notFound": "Page not found",
+      "errorTitle": "There is a problem",
+      "errorPageTitlePrefix": "Error",
+      "errors": {
+        "empty": "Enter the vaccination date",
+        "missingDay": "Vaccination date must include a day",
+        "missingMonth": "Vaccination date must include a month",
+        "missingYear": "Vaccination date must include a year",
+        "missingDayMonth": "Vaccination date must include a day and month",
+        "missingDayYear": "Vaccination date must include a day and year",
+        "missingMonthYear": "Vaccination date must include a month and year",
+        "missingDayMonthYear": "Vaccination date must include a day, month and year",
+        "invalid": "Vaccination date must be a real date",
+        "future": "The vaccination date must be today or in the past"
+      }
+    },
     "workList": {
       "title": "{{name}} - bTB vaccination list",
       "heading": "{{name}} - bTB vaccination list",
