@@ -110,10 +110,12 @@ npm install
 
 ### Git hooks
 
-Install git hooks (optional)
+Husky installs the Git hooks during `npm install`. The pre-commit hook runs Prettier and ESLint checks. The pre-push hook runs the test suite with coverage.
+
+To reinstall the Git hooks manually, run:
 
 ```bash
-npm run git:hooks
+npm run setup:husky
 ```
 
 ### Development
