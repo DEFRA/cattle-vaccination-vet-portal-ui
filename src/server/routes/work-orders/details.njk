@@ -46,7 +46,8 @@
           {% set workListDate = workList.name %}
         {% endif %}
         {% set listPrefix = "worklist-" + (workList.id | urlencode) %}
-        <h2 class="govuk-heading-m" id="{{ listPrefix }}">{{ t("pages.workOrder.vaccinationListHeading", { date: workListDate, interpolation: { escapeValue: false } }) }}</h2>
+        <h2 class="govuk-heading-m" id="{{ listPrefix }}">{{ t("pages.workOrder.vaccinationListHeading", { date:
+        workListDate, interpolation: { escapeValue: false } }) }}</h2>
         {% set taskLink %}
           <a class="govuk-link govuk-task-list__link"
             href="/work-orders/{{ workOrderId | urlencode }}/work-lists/{{ workList.id | urlencode }}"
@@ -63,6 +64,21 @@
                 tag: {
                   text: t("pages.workOrder.listReady"),
                   classes: "govuk-tag--grey"
+                }
+              }
+            },
+            {
+              href: "#",
+              title: {
+                text: t("pages.workOrder.reportVaccinationStatus")
+              },
+              hint: {
+                text: t("pages.workOrder.cattleToReport", { count: workList.animalCount })
+              },
+              status: {
+                tag: {
+                  text: t("pages.workOrder.reportStatusToDo"),
+                  classes: "govuk-tag--blue"
                 }
               }
             }
