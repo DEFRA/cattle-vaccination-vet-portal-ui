@@ -33,8 +33,8 @@
       <form method="post" action="/work-orders/{{ workOrderSlug | urlencode }}/work-lists/{{ workListId | urlencode }}/report-vaccination/date">
         <input type="hidden" name="crumb" value="{{ crumb }}">
         {{ govukDateInput({
-          id: "vaccination-date",
-          namePrefix: "vaccination-date",
+          id: dateInputId,
+          namePrefix: dateInputId,
           fieldset: {
             legend: {
               html: questionHtml,
@@ -50,20 +50,21 @@
           } if errorMessage,
           items: dateInputItems
         }) }}
-
-        {{ govukButton({
-          text: t("pages.vaccinationDate.continue"),
-          name: "action",
-          value: "continue",
-          preventDoubleClick: true
-        }) }}
-        {{ govukButton({
-          text: t("pages.vaccinationDate.saveForLater"),
-          name: "action",
-          value: "save-for-later",
-          classes: "govuk-button--secondary",
-          preventDoubleClick: true
-        }) }}
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: t("pages.vaccinationDate.continue"),
+            name: "action",
+            value: "continue",
+            preventDoubleClick: true
+          }) }}
+          {{ govukButton({
+            text: t("pages.vaccinationDate.saveForLater"),
+            name: "action",
+            value: "save-for-later",
+            classes: "govuk-button--secondary",
+            preventDoubleClick: true
+          }) }}
+          </div>
       </form>
     </div>
   </div>

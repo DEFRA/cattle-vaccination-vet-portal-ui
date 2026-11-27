@@ -58,11 +58,31 @@ describe('#workOrdersController', () => {
     const actions = $page('.govuk-summary-card__actions a')
 
     expect(actions.eq(0).text()).toContain('View work')
-    expect(actions.eq(0).attr('href')).toBe('/work-orders/CV-WorkOrder-2')
+    expect(actions.eq(0).attr('href')).toBe('/work-orders/CV%20WorkOrder%202')
     expect(actions).toHaveLength(1)
     expect(result).not.toContain('CPH details')
     expect(result).not.toContain('Issued date')
     expect(result).not.toContain('Tasks to complete')
+  })
+
+  test('Should pass the original work order ID through the link to the backend', async () => {
+    const workOrder = { ...workOrders[0], id: ' CV-WorkOrder / 2 ' }
+    backendRequest
+      .mockResolvedValueOnce([workOrder])
+      .mockResolvedValueOnce(workOrder)
+
+    const listing = await server.inject({ method: 'GET', url: '/work-orders' })
+    const $listing = load(listing.result)
+    const href = $listing('.govuk-summary-card__actions a').attr('href')
+
+    expect(href).toBe('/work-orders/%20CV-WorkOrder%20%2F%202%20')
+
+    const details = await server.inject({ method: 'GET', url: href })
+
+    expect(details.statusCode).toBe(statusCodes.ok)
+    expect(backendRequest).toHaveBeenLastCalledWith(
+      '/workorders/%20CV-WorkOrder%20%2F%202%20'
+    )
   })
 })
 
@@ -102,11 +122,13 @@ describe('#workOrderController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2'
+      url: '/work-orders/CV%20WorkOrder%202'
     })
 
     expect(statusCode).toBe(statusCodes.ok)
-    expect(backendRequest).toHaveBeenCalledWith('/workorders/CV-WorkOrder-2')
+    expect(backendRequest).toHaveBeenCalledWith(
+      '/workorders/CV%20WorkOrder%202'
+    )
 
     const $page = load(result)
     const information = $page('h2')
@@ -158,7 +180,7 @@ describe('#workOrderController', () => {
       'Download vaccination list (opens in a new tab)'
     )
     expect(taskLinks.eq(0).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     )
     expect(taskLinks.eq(0).attr('target')).toBe('_blank')
     expect(taskLinks.eq(0).attr('rel')).toBe('noopener noreferrer')
@@ -167,7 +189,7 @@ describe('#workOrderController', () => {
     )
     expect(taskLinks.eq(1).text().trim()).toBe('Report vaccination status')
     expect(taskLinks.eq(1).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002/report-vaccination/date'
+      '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002/report-vaccination/date'
     )
     expect(taskLinks.eq(1).attr('aria-describedby')).toBe(
       'worklist-a0W000000000002-2-hint worklist-a0W000000000002-2-status'
@@ -176,7 +198,7 @@ describe('#workOrderController', () => {
       '1,040 cattle to report'
     )
     expect(form.attr('method')).toBe('post')
-    expect(form.attr('action')).toBe('/work-orders/CV-WorkOrder-2')
+    expect(form.attr('action')).toBe('/work-orders/CV%20WorkOrder%202')
     expect(form.find('input[name="crumb"]').val()).toBeTruthy()
     expect(form.find('button.govuk-button').text()).toContain(
       'Create vaccination list'
@@ -223,7 +245,7 @@ describe('#workOrderController', () => {
 
       const { result, statusCode } = await server.inject({
         method: 'GET',
-        url: '/work-orders/CV-WorkOrder-2'
+        url: '/work-orders/CV%20WorkOrder%202'
       })
 
       expect(statusCode).toBe(statusCodes.ok)
@@ -264,7 +286,7 @@ describe('#workOrderController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2?lang=cy'
+      url: '/work-orders/CV%20WorkOrder%202?lang=cy'
     })
     expect(statusCode).toBe(statusCodes.ok)
 
@@ -296,10 +318,10 @@ describe('#workOrderController', () => {
     ])
     const links = lists.find('a')
     expect(links.eq(0).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/new%20list'
+      '/work-orders/CV%20WorkOrder%202/work-lists/new%20list'
     )
     expect(links.eq(2).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/older%2Flist'
+      '/work-orders/CV%20WorkOrder%202/work-lists/older%2Flist'
     )
     expect($page('h2[id^="worklist-"]').first().attr('id')).toBe(
       'worklist-new%20list'
@@ -317,13 +339,13 @@ describe('#workOrderController', () => {
     )
     expect(links.eq(1).text().trim()).toBe('Rhoi gwybod am statws brechu')
     expect(links.eq(1).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/new%20list/report-vaccination/date'
+      '/work-orders/CV%20WorkOrder%202/work-lists/new%20list/report-vaccination/date'
     )
     expect(links.eq(3).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/older%2Flist/report-vaccination/date'
+      '/work-orders/CV%20WorkOrder%202/work-lists/older%2Flist/report-vaccination/date'
     )
     expect(links.eq(5).attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2/work-lists/undated/report-vaccination/date'
+      '/work-orders/CV%20WorkOrder%202/work-lists/undated/report-vaccination/date'
     )
     expect($page('[id="worklist-new%20list-2-hint"]').text().trim()).toBe(
       '12 o wartheg i roi gwybod amdanynt'
@@ -339,7 +361,7 @@ describe('#workOrderController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2?lang=cy'
+      url: '/work-orders/CV%20WorkOrder%202?lang=cy'
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -357,7 +379,7 @@ describe('#workOrderController', () => {
 
     const { statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-99'
+      url: '/work-orders/CV%20WorkOrder%2099'
     })
 
     expect(statusCode).toBe(statusCodes.notFound)
@@ -374,7 +396,7 @@ describe('#workOrderController', () => {
 
       const page = await server.inject({
         method: 'GET',
-        url: '/work-orders/CV-WorkOrder-2'
+        url: '/work-orders/CV%20WorkOrder%202'
       })
       const $page = load(page.result)
       const form = $page('form[action^="/work-orders/"]')
@@ -387,7 +409,7 @@ describe('#workOrderController', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/work-orders/CV-WorkOrder-2',
+        url: '/work-orders/CV%20WorkOrder%202',
         headers: {
           cookie: crumbCookie.split(';')[0],
           'content-type': 'application/x-www-form-urlencoded'
@@ -400,10 +422,10 @@ describe('#workOrderController', () => {
       expect(response.statusCode).toBe(303)
       const headingId = `worklist-${encodeURIComponent(workListId)}`
       expect(response.headers.location).toBe(
-        `/work-orders/CV-WorkOrder-2#${encodeURIComponent(headingId)}`
+        `/work-orders/CV%20WorkOrder%202#${encodeURIComponent(headingId)}`
       )
       expect(backendRequest).toHaveBeenCalledWith(
-        '/workorders/CV-WorkOrder-2/work-lists',
+        '/workorders/CV%20WorkOrder%202/work-lists',
         { method: 'POST' }
       )
       backendRequest.mockResolvedValue({
@@ -439,7 +461,7 @@ describe('#workOrderController', () => {
       })
       const page = await server.inject({
         method: 'GET',
-        url: '/work-orders/CV-WorkOrder-2'
+        url: '/work-orders/CV%20WorkOrder%202'
       })
       const crumbCookie = page.headers['set-cookie'].find((value) =>
         value.startsWith('crumb=')
@@ -448,7 +470,7 @@ describe('#workOrderController', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/work-orders/CV-WorkOrder-2',
+        url: '/work-orders/CV%20WorkOrder%202',
         headers: {
           cookie: crumbCookie.split(';')[0],
           'content-type': 'application/x-www-form-urlencoded'
@@ -499,12 +521,12 @@ describe('#workListController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     })
 
     expect(statusCode).toBe(statusCodes.ok)
     expect(backendRequest).toHaveBeenCalledWith(
-      '/workorders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      '/workorders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     )
 
     const $page = load(result)
@@ -574,7 +596,7 @@ describe('#workListController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -614,7 +636,7 @@ describe('#workListController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     })
     expect(statusCode).toBe(statusCodes.ok)
     expect(
@@ -633,7 +655,7 @@ describe('#workListController', () => {
 
     const welshResponse = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002?lang=cy'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002?lang=cy'
     })
 
     expect(welshResponse.statusCode).toBe(statusCodes.ok)
@@ -792,7 +814,7 @@ describe('#workListController', () => {
 
     const { result, statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002'
     })
 
     expect(statusCode).toBe(statusCodes.ok)
@@ -831,7 +853,7 @@ describe('#workListController', () => {
 
     const welshResponse = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002?lang=cy'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002?lang=cy'
     })
     expect(welshResponse.statusCode).toBe(statusCodes.ok)
     const $welshPage = load(welshResponse.result)
@@ -856,7 +878,7 @@ describe('#workListController', () => {
 
     const { statusCode } = await server.inject({
       method: 'GET',
-      url: '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000099'
+      url: '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000099'
     })
 
     expect(statusCode).toBe(statusCodes.notFound)

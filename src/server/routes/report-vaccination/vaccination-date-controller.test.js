@@ -10,9 +10,9 @@ vi.mock('#/server/common/helpers/backend-client.js', () => ({
 }))
 
 const pageUrl =
-  '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000002/report-vaccination/date'
+  '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002/report-vaccination/date'
 const otherWorkListPageUrl =
-  '/work-orders/CV-WorkOrder-2/work-lists/a0W000000000003/report-vaccination/date'
+  '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000003/report-vaccination/date'
 const workOrder = {
   id: 'CV WorkOrder 2',
   cph: {
@@ -35,13 +35,17 @@ function cookiesFrom(...responses) {
   return [...cookies.values()].join('; ')
 }
 
-function formPayload($page, values = {}, crumb) {
-  const payload = {
+function datePayload(values) {
+  return {
     'vaccination-date-day': values.day ?? '',
     'vaccination-date-month': values.month ?? '',
     'vaccination-date-year': values.year ?? '',
     action: 'continue'
   }
+}
+
+function formPayload($page, values = {}, crumb) {
+  const payload = datePayload(values)
 
   if (crumb !== null) {
     payload.crumb = crumb ?? $page('input[name="crumb"]').val()
@@ -71,16 +75,17 @@ describe('#validateVaccinationDate', () => {
     ['5', 'Jan', '2026', '2026-01-05'],
     ['5', 'january', '2026', '2026-01-05'],
     ['5', 'JANUARY', '2026', '2026-01-05'],
-    ['5', 'Ionawr', '2026', '2026-01-05']
+    ['5', 'Ionawr', '2026', '2026-01-05'],
+    ['19', '11', '2026', '2026-11-19']
   ])('accepts day %s, month %s and year %s', (day, month, year, expected) => {
-    expect(validateVaccinationDate({ day, month, year }, today)).toEqual({
-      value: expected
-    })
+    expect(
+      validateVaccinationDate(datePayload({ day, month, year }), today)
+    ).toEqual({ value: expected })
   })
 
   test.each([
     [
-      { day: '', month: '', year: '' },
+      { day: '  ', month: '', year: '' },
       { errorKey: 'empty', errorFields: ['day', 'month', 'year'] }
     ],
     [
@@ -112,7 +117,12 @@ describe('#validateVaccinationDate', () => {
       { errorKey: 'future', errorFields: ['day', 'month', 'year'] }
     ]
   ])('returns the appropriate validation error for %o', (values, expected) => {
-    expect(validateVaccinationDate(values, today)).toEqual(expected)
+    expect(validateVaccinationDate(datePayload(values), today)).toEqual({
+      errorKey: expected.errorKey,
+      errorFields: expected.errorFields.map(
+        (part) => `vaccination-date-${part}`
+      )
+    })
   })
 })
 
@@ -136,7 +146,9 @@ describe('#vaccinationDateController', () => {
     const response = await server.inject({ method: 'GET', url: pageUrl })
 
     expect(response.statusCode).toBe(statusCodes.ok)
-    expect(backendRequest).toHaveBeenCalledWith('/workorders/CV-WorkOrder-2')
+    expect(backendRequest).toHaveBeenCalledWith(
+      '/workorders/CV%20WorkOrder%202'
+    )
 
     const $page = load(response.result)
     const form = $page('form[action$="/report-vaccination/date"]')
@@ -152,7 +164,7 @@ describe('#vaccinationDateController', () => {
       'For example, 20 4 2028'
     )
     expect($page('.govuk-back-link').attr('href')).toBe(
-      '/work-orders/CV-WorkOrder-2'
+      '/work-orders/CV%20WorkOrder%202'
     )
     expect(form.attr('method')).toBe('post')
     expect(form.attr('action')).toBe(pageUrl)
@@ -198,7 +210,7 @@ describe('#vaccinationDateController', () => {
     })
 
     expect(saved.statusCode).toBe(303)
-    expect(saved.headers.location).toBe('/work-orders/CV-WorkOrder-2')
+    expect(saved.headers.location).toBe('/work-orders/CV%20WorkOrder%202')
 
     const revisited = await server.inject({
       method: 'GET',
@@ -262,11 +274,11 @@ describe('#vaccinationDateController', () => {
     )
   })
 
-  test('highlights the incorrect field for a clearly invalid date part', async () => {
+  test('links to the invalid field and retains the submitted value', async () => {
     const page = await server.inject({ method: 'GET', url: pageUrl })
     const response = await submitDate(server, page, {
-      day: '32',
-      month: 'Jan',
+      day: '12',
+      month: ' Smarch ',
       year: '2020'
     })
     const $page = load(response.result)
@@ -276,9 +288,36 @@ describe('#vaccinationDateController', () => {
       'Vaccination date must be a real date'
     )
     expect($page('.govuk-input--error')).toHaveLength(1)
-    expect($page('#vaccination-date-day').hasClass('govuk-input--error')).toBe(
-      true
+    const errorHref = $page('.govuk-error-summary__list a').attr('href')
+    expect(errorHref).toBe('#vaccination-date-month')
+    expect($page(errorHref).attr('name')).toBe('vaccination-date-month')
+    expect($page(errorHref).hasClass('govuk-input--error')).toBe(true)
+    expect($page(errorHref).val()).toBe(' Smarch ')
+  })
+
+  test('shows Welsh validation errors and retains the submitted date parts', async () => {
+    const page = await server.inject({
+      method: 'GET',
+      url: `${pageUrl}?lang=cy`
+    })
+    const response = await submitDate(server, page, {
+      day: '31',
+      month: 'Chwefror',
+      year: '2020'
+    })
+    const $page = load(response.result)
+
+    expect(response.statusCode).toBe(statusCodes.badRequest)
+    expect($page('.govuk-error-summary__list a').text()).toBe(
+      'Rhaid i ddyddiad y brechiad fod yn ddyddiad go iawn'
     )
+    expect($page('.govuk-error-summary__list a').attr('href')).toBe(
+      '#vaccination-date-day'
+    )
+    expect($page('#vaccination-date-day').val()).toBe('31')
+    expect($page('#vaccination-date-month').val()).toBe('Chwefror')
+    expect($page('#vaccination-date-year').val()).toBe('2020')
+    expect($page('.govuk-input--error')).toHaveLength(3)
   })
 
   test('highlights the whole date when it is in the future', async () => {

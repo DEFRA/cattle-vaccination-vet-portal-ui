@@ -1,58 +1,15 @@
+import { format } from 'date-fns'
+
 import { statusCodes } from '#/server/common/constants/status-codes.js'
 import { backendRequest } from '#/server/common/helpers/backend-client.js'
+import { dateFields, dateParts } from '#/server/common/validation/date-parts.js'
 
 const sessionKey = 'vaccinationReportDrafts'
-const dateFields = ['day', 'month', 'year']
-const monthNames = new Map([
-  ['jan', 1],
-  ['january', 1],
-  ['feb', 2],
-  ['february', 2],
-  ['mar', 3],
-  ['march', 3],
-  ['apr', 4],
-  ['april', 4],
-  ['may', 5],
-  ['jun', 6],
-  ['june', 6],
-  ['jul', 7],
-  ['july', 7],
-  ['aug', 8],
-  ['august', 8],
-  ['sep', 9],
-  ['sept', 9],
-  ['september', 9],
-  ['oct', 10],
-  ['october', 10],
-  ['nov', 11],
-  ['november', 11],
-  ['dec', 12],
-  ['december', 12],
-  ['ion', 1],
-  ['ionawr', 1],
-  ['chwe', 2],
-  ['chwefror', 2],
-  ['maw', 3],
-  ['mawrth', 3],
-  ['ebr', 4],
-  ['ebrill', 4],
-  ['mai', 5],
-  ['meh', 6],
-  ['mehefin', 6],
-  ['gor', 7],
-  ['gorffennaf', 7],
-  ['aws', 8],
-  ['awst', 8],
-  ['med', 9],
-  ['medi', 9],
-  ['hyd', 10],
-  ['hydref', 10],
-  ['tach', 11],
-  ['tachwedd', 11],
-  ['rhag', 12],
-  ['rhagfyr', 12]
-])
-
+const dateInputId = 'vaccination-date'
+const dateFieldIds = Object.fromEntries(
+  dateFields.map((part) => [part, `${dateInputId}-${part}`])
+)
+const allDateFieldIds = Object.values(dateFieldIds)
 const incompleteErrorKeys = {
   day: 'missingDay',
   month: 'missingMonth',
@@ -63,104 +20,51 @@ const incompleteErrorKeys = {
   'day,month,year': 'missingDayMonthYear'
 }
 
-function normaliseValues(payload) {
-  return {
-    day: String(payload['vaccination-date-day'] ?? '').trim(),
-    month: String(payload['vaccination-date-month'] ?? '').trim(),
-    year: String(payload['vaccination-date-year'] ?? '').trim()
-  }
-}
-
-function incompleteFields(values) {
-  const fields = []
-
-  if (!values.day) {
-    fields.push('day')
-  }
-  if (!values.month || /^[a-z]{1,2}$/iu.test(values.month)) {
-    fields.push('month')
-  }
-  if (!values.year || /^\d{1,3}$/.test(values.year)) {
-    fields.push('year')
-  }
-
-  return fields
-}
-
-function parseMonth(month) {
-  if (/^\d{1,2}$/.test(month)) {
-    return Number(month)
-  }
-
-  return monthNames.get(month.toLocaleLowerCase('en-GB').replace(/\.$/, ''))
-}
-
-function isRealDate(day, month, year) {
-  const date = new Date(0)
-  date.setUTCHours(0, 0, 0, 0)
-  date.setUTCFullYear(year, month - 1, day)
-
-  return (
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
+export function validateVaccinationDate(payload, today = new Date()) {
+  const values = Object.fromEntries(
+    allDateFieldIds.map((field) => [field, payload[field]])
   )
-}
+  const schema = dateParts({
+    namePrefix: dateInputId,
+    max: format(today, 'yyyy-MM-dd')
+  })
+  const { error, value } = schema.validate(values, { abortEarly: false })
 
-function isFutureDate(day, month, year, today) {
-  const value = year * 10000 + month * 100 + day
-  const todayValue =
-    today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
-
-  return value > todayValue
-}
-
-export function validateVaccinationDate(values, today = new Date()) {
-  if (dateFields.every((field) => !values[field])) {
-    return { errorKey: 'empty', errorFields: dateFields }
+  if (!error) {
+    return { value }
   }
 
-  const fieldsMissingInformation = incompleteFields(values)
+  if (
+    allDateFieldIds.every((field) => {
+      const value = values[field] ?? ''
+      return typeof value === 'string' && !value.trim()
+    })
+  ) {
+    return { errorKey: 'empty', errorFields: allDateFieldIds }
+  }
 
-  if (fieldsMissingInformation.length) {
+  const incompleteFields = error.details
+    .filter(({ type }) => type === 'any.required')
+    .map(({ path }) => path[0])
+
+  if (incompleteFields.length) {
+    const incompleteParts = dateFields.filter((part) =>
+      incompleteFields.includes(dateFieldIds[part])
+    )
+
     return {
-      errorKey: incompleteErrorKeys[fieldsMissingInformation.join(',')],
-      errorFields: fieldsMissingInformation
+      errorKey: incompleteErrorKeys[incompleteParts.join(',')],
+      errorFields: incompleteFields
     }
   }
 
-  const day = /^\d{1,2}$/.test(values.day) ? Number(values.day) : undefined
-  const month = parseMonth(values.month)
-  const year = /^\d{4}$/.test(values.year) ? Number(values.year) : undefined
-  const invalidFields = []
-
-  if (!day || day > 31) {
-    invalidFields.push('day')
-  }
-  if (!month || month > 12) {
-    invalidFields.push('month')
-  }
-  if (year === undefined || year === 0) {
-    invalidFields.push('year')
-  }
-
-  if (invalidFields.length) {
-    return {
-      errorKey: 'invalid',
-      errorFields: invalidFields.length === 1 ? invalidFields : dateFields
-    }
-  }
-
-  if (!isRealDate(day, month, year)) {
-    return { errorKey: 'invalid', errorFields: dateFields }
-  }
-
-  if (isFutureDate(day, month, year, today)) {
-    return { errorKey: 'future', errorFields: dateFields }
-  }
-
+  const [firstError] = error.details
   return {
-    value: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    errorKey: firstError.type === 'date.max' ? 'future' : 'invalid',
+    errorFields:
+      error.details.length === 1 && firstError.path.length
+        ? firstError.path
+        : allDateFieldIds
   }
 }
 
@@ -191,22 +95,26 @@ function getFarmName(workOrder) {
 }
 
 function valuesFromStoredDate(vaccinationDate) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(vaccinationDate ?? '')
+  const match = /^(\d{1,4})-(\d{2})-(\d{2})$/.exec(vaccinationDate ?? '')
 
   if (!match) {
-    return { day: '', month: '', year: '' }
+    return {}
   }
 
-  return { day: match[3], month: match[2], year: match[1] }
+  return {
+    [dateFieldIds.day]: match[3],
+    [dateFieldIds.month]: match[2],
+    [dateFieldIds.year]: match[1].padStart(4, '0')
+  }
 }
 
 function buildDateInputItems(request, values, errorFields = []) {
-  return dateFields.map((field) => ({
-    name: field,
-    label: request.t(`pages.vaccinationDate.${field}`),
-    value: values[field],
-    error: errorFields.includes(field),
-    inputmode: field === 'month' ? 'text' : 'numeric'
+  return Object.entries(dateFieldIds).map(([part, id]) => ({
+    name: part,
+    label: request.t(`pages.vaccinationDate.${part}`),
+    value: typeof values[id] === 'string' ? values[id] : '',
+    error: errorFields.includes(id),
+    inputmode: part === 'month' ? 'text' : 'numeric'
   }))
 }
 
@@ -224,6 +132,7 @@ function buildViewModel(request, workOrder, values, validation) {
     farmName,
     workOrderSlug: request.params.workOrderSlug,
     workListId: request.params.workListId,
+    dateInputId,
     dateInputItems: buildDateInputItems(
       request,
       values,
@@ -231,7 +140,7 @@ function buildViewModel(request, workOrder, values, validation) {
     ),
     errorMessage,
     errorHref: validation?.errorFields?.length
-      ? `#vaccination-date-${validation.errorFields[0]}`
+      ? `#${validation.errorFields[0]}`
       : undefined
   }
 }
@@ -270,7 +179,7 @@ export const vaccinationDateController = {
 
 export const saveVaccinationDateController = {
   async handler(request, h) {
-    const values = normaliseValues(request.payload)
+    const values = request.payload ?? {}
     const validation = validateVaccinationDate(values)
 
     if (validation.errorKey) {

@@ -128,10 +128,7 @@ export const workOrdersController = {
     return h.view('work-orders/index', {
       pageTitle: request.t('pages.workOrders.title'),
       heading: request.t('pages.workOrders.heading'),
-      workOrders: workOrders.map((workOrder) => ({
-        ...workOrder,
-        slug: workOrder.id.replaceAll(' ', '-')
-      })),
+      workOrders,
       breadcrumbs: [
         {
           text: request.t('navigation.home'),
