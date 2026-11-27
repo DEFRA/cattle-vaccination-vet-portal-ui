@@ -1,0 +1,71 @@
+{% extends 'layouts/page.njk' %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: t("pages.vaccinationDate.back", { name: farmName }),
+    href: "/work-orders/" + (workOrderSlug | urlencode)
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if errorMessage %}
+        {{ govukErrorSummary({
+          titleText: t("pages.vaccinationDate.errorTitle"),
+          errorList: [
+            {
+              text: errorMessage,
+              href: errorHref
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      {% set questionHtml %}
+        <span class="govuk-caption-m">{{ t("pages.vaccinationDate.caption", { name: farmName }) }}</span>
+        {{ t("pages.vaccinationDate.question") }}
+      {% endset %}
+      <form method="post" action="/work-orders/{{ workOrderSlug | urlencode }}/work-lists/{{ workListId | urlencode }}/report-vaccination/date">
+        <input type="hidden" name="crumb" value="{{ crumb }}">
+        {{ govukDateInput({
+          id: dateInputId,
+          namePrefix: dateInputId,
+          fieldset: {
+            legend: {
+              html: questionHtml,
+              classes: "govuk-fieldset__legend--l",
+              isPageHeading: true
+            }
+          },
+          hint: {
+            text: t("pages.vaccinationDate.hint")
+          },
+          errorMessage: {
+            text: errorMessage
+          } if errorMessage,
+          items: dateInputItems
+        }) }}
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: t("pages.vaccinationDate.continue"),
+            name: "action",
+            value: "continue",
+            preventDoubleClick: true
+          }) }}
+          {{ govukButton({
+            text: t("pages.vaccinationDate.saveForLater"),
+            name: "action",
+            value: "save-for-later",
+            classes: "govuk-button--secondary",
+            preventDoubleClick: true
+          }) }}
+          </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

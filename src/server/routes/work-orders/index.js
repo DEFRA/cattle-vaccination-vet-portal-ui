@@ -21,17 +21,17 @@ export const workOrders = {
         },
         {
           method: 'GET',
-          path: '/work-orders/{workOrderId}',
+          path: '/work-orders/{workOrderSlug}',
           ...workOrderController
         },
         {
           method: 'POST',
-          path: '/work-orders/{workOrderId}',
+          path: '/work-orders/{workOrderSlug}',
           ...createWorkListController
         },
         {
           method: 'GET',
-          path: '/work-orders/{workOrderId}/work-lists/{workListId}',
+          path: '/work-orders/{workOrderSlug}/work-lists/{workListId}',
           ...workListController
         }
       ])

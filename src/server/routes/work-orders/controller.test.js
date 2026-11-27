@@ -64,6 +64,26 @@ describe('#workOrdersController', () => {
     expect(result).not.toContain('Issued date')
     expect(result).not.toContain('Tasks to complete')
   })
+
+  test('Should pass the original work order ID through the link to the backend', async () => {
+    const workOrder = { ...workOrders[0], id: ' CV-WorkOrder / 2 ' }
+    backendRequest
+      .mockResolvedValueOnce([workOrder])
+      .mockResolvedValueOnce(workOrder)
+
+    const listing = await server.inject({ method: 'GET', url: '/work-orders' })
+    const $listing = load(listing.result)
+    const href = $listing('.govuk-summary-card__actions a').attr('href')
+
+    expect(href).toBe('/work-orders/%20CV-WorkOrder%20%2F%202%20')
+
+    const details = await server.inject({ method: 'GET', url: href })
+
+    expect(details.statusCode).toBe(statusCodes.ok)
+    expect(backendRequest).toHaveBeenLastCalledWith(
+      '/workorders/%20CV-WorkOrder%20%2F%202%20'
+    )
+  })
 })
 
 describe('#workOrderController', () => {
@@ -168,7 +188,9 @@ describe('#workOrderController', () => {
       'worklist-a0W000000000002 worklist-a0W000000000002-1-status'
     )
     expect(taskLinks.eq(1).text().trim()).toBe('Report vaccination status')
-    expect(taskLinks.eq(1).attr('href')).toBe('#')
+    expect(taskLinks.eq(1).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/a0W000000000002/report-vaccination/date'
+    )
     expect(taskLinks.eq(1).attr('aria-describedby')).toBe(
       'worklist-a0W000000000002-2-hint worklist-a0W000000000002-2-status'
     )
@@ -207,6 +229,34 @@ describe('#workOrderController', () => {
     expect(result).not.toContain('Work lists')
     expect(result).not.toContain('Full CPH information')
   })
+
+  test.each([
+    ['missing', {}, undefined],
+    ['null', { animalCount: null }, undefined],
+    ['zero', { animalCount: 0 }, '0 cattle to report']
+  ])(
+    'Should handle a %s animal count',
+    async (_case, countField, expectedHint) => {
+      backendRequest.mockResolvedValue({
+        id: 'CV WorkOrder 2',
+        cph: { locationName: 'Hill Farm' },
+        workLists: [{ id: 'list-1', name: 'Vaccination list 1', ...countField }]
+      })
+
+      const { result, statusCode } = await server.inject({
+        method: 'GET',
+        url: '/work-orders/CV%20WorkOrder%202'
+      })
+
+      expect(statusCode).toBe(statusCodes.ok)
+      const $page = load(result)
+      const hint = $page('#worklist-list-1-2-hint')
+      expect(hint.length ? hint.text().trim() : undefined).toBe(expectedHint)
+      expect($page('.govuk-task-list__link').eq(1).text().trim()).toBe(
+        'Report vaccination status'
+      )
+    }
+  )
 
   test('Should show each vaccination list in newest-first order with unique task descriptions', async () => {
     backendRequest.mockResolvedValue({
@@ -288,7 +338,15 @@ describe('#workOrderController', () => {
       "Lawrlwytho'r rhestr frechu (yn agor mewn tab newydd)"
     )
     expect(links.eq(1).text().trim()).toBe('Rhoi gwybod am statws brechu')
-    expect(links.eq(1).attr('href')).toBe('#')
+    expect(links.eq(1).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/new%20list/report-vaccination/date'
+    )
+    expect(links.eq(3).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/older%2Flist/report-vaccination/date'
+    )
+    expect(links.eq(5).attr('href')).toBe(
+      '/work-orders/CV%20WorkOrder%202/work-lists/undated/report-vaccination/date'
+    )
     expect($page('[id="worklist-new%20list-2-hint"]').text().trim()).toBe(
       '12 o wartheg i roi gwybod amdanynt'
     )

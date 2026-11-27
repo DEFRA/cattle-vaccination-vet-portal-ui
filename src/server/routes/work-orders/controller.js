@@ -157,11 +157,12 @@ function workOrderNotFound(h) {
  */
 export const workOrderController = {
   async handler(request, h) {
+    const { workOrderSlug } = request.params
     let workOrder
 
     try {
       workOrder = await backendRequest(
-        `/workorders/${encodeURIComponent(request.params.workOrderId)}`
+        `/workorders/${encodeURIComponent(workOrderSlug)}`
       )
     } catch (error) {
       if (error.statusCode !== statusCodes.notFound) {
@@ -178,7 +179,7 @@ export const workOrderController = {
       pageTitle: request.t('pages.workOrder.title', { name }),
       name,
       issueDate: cph?.startDate,
-      workOrderId: request.params.workOrderId,
+      workOrderSlug,
       cphCode: cph?.cphCode,
       address: cph?.address,
       workLists: (workOrder.workLists || []).toSorted(newestWorkListFirst)
@@ -191,12 +192,12 @@ export const workOrderController = {
  */
 export const createWorkListController = {
   async handler(request, h) {
-    const workOrderId = request.params.workOrderId
+    const { workOrderSlug } = request.params
     let workList
 
     try {
       workList = await backendRequest(
-        `/workorders/${encodeURIComponent(workOrderId)}/work-lists`,
+        `/workorders/${encodeURIComponent(workOrderSlug)}/work-lists`,
         { method: 'POST' }
       )
     } catch (error) {
@@ -211,7 +212,7 @@ export const createWorkListController = {
 
     return h
       .redirect(
-        `/work-orders/${encodeURIComponent(workOrderId)}#${encodeURIComponent(headingId)}`
+        `/work-orders/${encodeURIComponent(workOrderSlug)}#${encodeURIComponent(headingId)}`
       )
       .code(303)
   }
@@ -222,12 +223,12 @@ export const createWorkListController = {
  */
 export const workListController = {
   async handler(request, h) {
-    const { workOrderId, workListId } = request.params
+    const { workOrderSlug, workListId } = request.params
     let workList
 
     try {
       workList = await backendRequest(
-        `/workorders/${encodeURIComponent(workOrderId)}/work-lists/${encodeURIComponent(workListId)}`
+        `/workorders/${encodeURIComponent(workOrderSlug)}/work-lists/${encodeURIComponent(workListId)}`
       )
     } catch (error) {
       if (error.statusCode !== statusCodes.notFound) {
